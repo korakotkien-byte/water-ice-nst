@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>แบบฟอร์มกรอกข้อมูลสถานที่ผลิตน้ำบริโภค/น้ำแข็ง</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Chakra+Petch:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #0A4A6E;
+    --primary-light: #1a6fa0;
+    --accent: #00C9A7;
+    --accent2: #F4A020;
+    --bg: #f0f5f9;
+    --card: #ffffff;
+    --text: #1a2e3b;
+    --text-light: #5a7a8a;
+    --border: #d0e4ef;
+    --success: #10b981;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+    --row-hover: #e8f4fd;
+    --tag-bg: #e0f2fe;
+    --tag-text: #0369a1;
+    --shadow: 0 4px 24px rgba(10,74,110,0.10);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Sarabun', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: white;
+    padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 16px rgba(10,74,110,0.25);
+  }
+  .header-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .header-icon {
+    width: 46px; height: 46px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .header-text h1 {
+    font-family: 'Chakra Petch', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    line-height: 1.3;
+  }
+  .header-text p {
+    font-size: 13px;
+    opacity: 0.8;
+    margin-top: 2px;
+  }
+  .amphoe-badge {
+    margin-left: auto;
+    background: var(--accent);
+    color: #003d2e;
+    font-family: 'Chakra Petch', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 6px 16px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+
+  /* Main */
+  .main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 28px 20px 60px;
+  }
+
+  /* Stats bar */
+  .stats-bar {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+  .stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: 14px 20px;
+    flex: 1;
+    min-width: 140px;
+    box-shadow: var(--shadow);
+    border-left: 4px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .stat-card.total { border-left-color: var(--primary); }
+  .stat-card.filled { border-left-color: var(--success); }
+  .stat-card.pending { border-left-color: var(--warning); }
+  .stat-label { font-size: 12px; color: var(--text-light); font-weight: 500; }
+  .stat-val { font-family: 'Chakra Petch', sans-serif; font-size: 26px; font-weight: 700; color: var(--text); }
+  .stat-card.total .stat-val { color: var(--primary); }
+  .stat-card.filled .stat-val { color: var(--success); }
+  .stat-card.pending .stat-val { color: var(--warning); }
+
+  /* Progress */
+  .progress-wrap {
+    background: white;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow);
+  }
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: var(--text-light);
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+  .progress-bar {
+    height: 10px;
+    background: var(--bg);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent) 0%, var(--primary-light) 100%);
+    border-radius: 999px;
+    transition: width 0.5s ease;
+  }
+
+  /* Table wrapper */
+  .table-wrap {
+    background: white;
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .table-toolbar {
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .toolbar-title {
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--primary);
+    flex: 1;
+  }
+  .search-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 7px 12px;
+    font-size: 14px;
+    font-family: 'Sarabun', sans-serif;
+    color: var(--text);
+    width: 200px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .search-box:focus { border-color: var(--primary-light); }
+
+  .filter-select {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 7px 12px;
+    font-size: 13px;
+    font-family: 'Sarabun', sans-serif;
+    color: var(--text);
+    outline: none;
+    cursor: pointer;
+  }
+
+  /* Table */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .data-table thead {
+    background: var(--primary);
+    color: white;
+  }
+  .data-table th {
+    padding: 12px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: left;
+    white-space: nowrap;
+    letter-spacing: 0.3px;
+  }
+  .data-table th:first-child { width: 50px; text-align: center; }
+  .data-table tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+  .data-table tbody tr:last-child { border-bottom: none; }
+  .data-table tbody tr:hover { background: var(--row-hover); }
+  .data-table td {
+    padding: 12px 14px;
+    font-size: 13px;
+    vertical-align: top;
+  }
+  .td-no { text-align: center; color: var(--text-light); font-size: 12px; }
+  .place-name { font-weight: 600; font-size: 14px; color: var(--primary); }
+  .place-addr { font-size: 12px; color: var(--text-light); margin-top: 2px; }
+  .place-type { font-size: 11px; color: var(--tag-text); background: var(--tag-bg); padding: 2px 8px; border-radius: 999px; display: inline-block; margin-top: 3px; }
+
+  /* Status badge */
+  .status-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 600;
+  }
+  .status-badge.active { background: #dcfce7; color: #15803d; }
+  .status-badge.inactive { background: #fee2e2; color: #b91c1c; }
+  .status-badge.empty { background: #fef9c3; color: #92400e; }
+  .status-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+
+  /* Form inputs inline */
+  .inline-select {
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 13px;
+    font-family: 'Sarabun', sans-serif;
+    color: var(--text);
+    outline: none;
+    width: 100%;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .inline-select:focus { border-color: var(--primary-light); box-shadow: 0 0 0 3px rgba(26,111,160,0.12); }
+
+  .inline-input {
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 13px;
+    font-family: 'Sarabun', sans-serif;
+    color: var(--text);
+    outline: none;
+    width: 100%;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .inline-input:focus { border-color: var(--primary-light); box-shadow: 0 0 0 3px rgba(26,111,160,0.12); }
+  .inline-input::placeholder { color: #b0c4d0; }
+
+  .coord-row { display: flex; gap: 6px; }
+  .coord-row .inline-input { flex: 1; }
+  .gps-btn {
+    background: var(--accent);
+    border: none;
+    border-radius: 8px;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s, transform 0.1s;
+    flex-shrink: 0;
+  }
+  .gps-btn:hover { background: #00b396; transform: scale(1.05); }
+  .gps-btn:active { transform: scale(0.97); }
+
+  /* Save row button */
+  .save-row-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 7px 14px;
+    font-size: 12px;
+    font-family: 'Sarabun', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.2s, transform 0.1s;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .save-row-btn:hover { background: var(--primary-light); }
+  .save-row-btn:active { transform: scale(0.97); }
+  .save-row-btn.saved { background: var(--success); }
+  .save-row-btn.saving { background: var(--text-light); cursor: not-allowed; }
+
+  /* Bottom bar */
+  .bottom-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: white;
+    border-top: 2px solid var(--border);
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    z-index: 100;
+    box-shadow: 0 -4px 20px rgba(10,74,110,0.10);
+  }
+  .bottom-info { font-size: 13px; color: var(--text-light); }
+  .bottom-info strong { color: var(--primary); }
+  .submit-all-btn {
+    background: linear-gradient(135deg, var(--accent) 0%, #00b396 100%);
+    color: #003d2e;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 28px;
+    font-size: 15px;
+    font-family: 'Chakra Petch', sans-serif;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 4px 12px rgba(0,201,167,0.35);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .submit-all-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,201,167,0.4); }
+  .submit-all-btn:active { transform: translateY(0); }
+  .submit-all-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    top: 80px; right: 24px;
+    background: var(--primary);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    z-index: 9999;
+    box-shadow: 0 8px 24px rgba(10,74,110,0.3);
+    transform: translateX(120%);
+    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .toast.show { transform: translateX(0); }
+  .toast.success { background: var(--success); }
+  .toast.error { background: var(--danger); }
+
+  /* Loading overlay */
+  .loading-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 9998;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .loading-overlay.show { display: flex; }
+  .spinner {
+    width: 48px; height: 48px;
+    border: 4px solid rgba(255,255,255,0.3);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  .loading-text { color: white; font-size: 15px; font-weight: 500; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Empty state */
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-light);
+  }
+  .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
+  .empty-state p { font-size: 15px; }
+
+  /* No amphoe screen */
+  .no-amphoe {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 70vh;
+    text-align: center;
+    padding: 40px 20px;
+  }
+  .no-amphoe .big-icon { font-size: 72px; margin-bottom: 20px; }
+  .no-amphoe h2 { font-size: 24px; font-weight: 700; color: var(--primary); margin-bottom: 12px; }
+  .no-amphoe p { color: var(--text-light); max-width: 420px; line-height: 1.7; }
+  .no-amphoe code {
+    display: inline-block;
+    margin-top: 16px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--primary);
+    font-family: monospace;
+  }
+
+  /* Responsive */
+  @media (max-width: 700px) {
+    .stats-bar { gap: 8px; }
+    .stat-card { min-width: 100px; padding: 10px 14px; }
+    .stat-val { font-size: 20px; }
+    .data-table th, .data-table td { padding: 8px 8px; }
+    .search-box { width: 140px; }
+    .bottom-bar { flex-direction: column; align-items: stretch; gap: 8px; }
+    .submit-all-btn { width: 100%; justify-content: center; }
+    .amphoe-badge { font-size: 12px; padding: 4px 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="header-icon">💧</div>
+    <div class="header-text">
+      <h1>ทะเบียนน้ำบริโภค / น้ำแข็ง</h1>
+      <p>แบบฟอร์มกรอกข้อมูลประจำปี 2569</p>
+    </div>
+    <div class="amphoe-badge" id="amphoeBadge">กำลังโหลด...</div>
+  </div>
+</div>
+
+<div class="main">
+  <div id="mainContent"></div>
+</div>
+
+<!-- Bottom bar -->
+<div class="bottom-bar" id="bottomBar" style="display:none">
+  <div class="bottom-info">
+    กรอกแล้ว <strong id="filledCount">0</strong> / <strong id="totalCount">0</strong> สถานที่
+  </div>
+  <button class="submit-all-btn" id="submitAllBtn" onclick="submitAll()">
+    <span>📤</span> ส่งข้อมูลทั้งหมด
+  </button>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Loading -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-text">กำลังส่งข้อมูล...</div>
+</div>
+
+<script>
+// ===== CONFIG =====
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyZxNrKEfw4nKoj22O67WjgnbSyrD__V0r5qan9Gf9fia2sE4gLKhqbkXTNxEM31moA/exec'; // ← ใส่ URL จาก Apps Script ตรงนี้
+const SPREADSHEET_ID = '1DH1jTRIqR8A9siX44miQrtnsCxZjC2GBPvC-r9BE8AI';
+const SHEET_NAME = 'น้ำบริโภค_น้ำแข็ง (คงอยู่)';
+
+// ===== DATA =====
+const allData = {"เมืองนครศรีธรรมราช": [{"no": "1", "license": "80-1-21026", "type": "น้ำแข็ง", "name": "บริษัท นันทผลพานิช จำกัด", "place": "บริษัท โรงน้ำแข็งบริษัทนันทผลพานิช จำกัด สาขานครศรีธรรมราช", "addr": "1222/701 ถนนศรีปราชญ์ ต.คลัง"}, {"no": "2", "license": "80-1-16328", "type": "น้ำแข็ง / ไอศกรีม", "name": "นายสุพัฒน์  เกียรติลัชชานนท์", "place": "เปเป้ ไอศกรีม", "addr": "26/2 ซอยประชาพัฒนา ถนนกะโรม ต.โพธิ์เสด็จ"}, {"no": "3", "license": "80-1-52329", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "บริษัท ศรีธรรมราชลำเลียง จำกัด", "place": "บริษัท ศรีธรรมราชลำเลียง จำกัด", "addr": "928/1,928/2 ถนนราชดำเนิน ต.คลัง"}, {"no": "10", "license": "80-2-00535", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวพรศรี  บุญสิน", "place": "น้ำดื่มอัมรินทร์", "addr": "436/8 หมู่ 1 ต.ปากพูน"}, {"no": "14", "license": "80-2-00936", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางอุไรรัตน์ ทัศนโกวิทย์", "place": "น้ำดื่มฮิปโป", "addr": "213/13 ซอยหัวท่า ถนนชลวิถี ต.ในเมือง"}, {"no": "16", "license": "80-2-00437", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายประเสริฐ  เฉตาไพ", "place": "น้ำดื่มโพธิ์ทอง", "addr": "4/2 หมู่ 5 ต.โพธิ์เสด็จ"}, {"no": "23", "license": "80-2-01539", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางอัจฉรา  นินวาโย", "place": "น้ำดื่มแม่อ่างทอง", "addr": "49 ซอยแม่อ่างทอง2 ถนนพัฒนาการคูขวาง ต.ในเมือง"}, {"no": "27", "license": "80-2-03539", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางชนิตปรียา  แซ่ด่าน", "place": "น้ำดื่มตราบางปู", "addr": "8/17 หมู่ 10 ต.ปากพูน"}, {"no": "29", "license": "80-2-00540", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท / น้ำแข็ง", "name": "ห้างหุ้นส่วนจำกัด เครือไทยน้ำแข็งหลอด", "place": "หจก.เครือไทยน้ำแข็งหลอด", "addr": "14/12 ซอยมิ่งมงคล ถนนสะพานยาว ต.โพธิ์เสด็จ"}, {"no": "32", "license": "80-2-01640", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายประยูร  จิระพิบูลย์พันธ์", "place": "น้ำดื่มจอย", "addr": "27/15 ซอยบขส. ถนนกะโรม ต.โพธิ์เสด็จ"}, {"no": "33", "license": "80-2-01840", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายสมบูรณ์  แก้วศรี", "place": "น้ำดื่มสุขสมบูรณ์", "addr": "134 หมู่ 6 ต.ปากพูน"}, {"no": "34", "license": "80-2-01940", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "พันจ่าเอกไวกูณฐ์  จโนภาส", "place": "น้ำดื่มสามบีสอง", "addr": "55/1 ถนนราชดำเนิน ต.ในเมือง"}, {"no": "67", "license": "80-2-01144", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายวราพงษ์ สุวรรณรัศมี", "place": "ขวานทอง", "addr": "65 ถนนโคกธาตุ ต.ในเมือง"}, {"no": "75", "license": "80-2-01145", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางพรพรรณ  มั่นเมือง", "place": "น้ำดื่มชาวใต้", "addr": "71 ถนนราชดำเนิน ต.ในเมือง"}, {"no": "76", "license": "80-2-01245", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายสุรัตน์ วิริยะตั้งสกุล", "place": "น้ำพัดชา", "addr": "89/71 ถนนพัฒนาการคูขวาง ต.คลัง"}, {"no": "83", "license": "80-2-01146", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "ดาบตำรวจ สมหมาย ผดุงสัตย์", "place": "น้ำดื่มโพธิ์เสด็จ", "addr": "60/3 หมู่ 5 ต.โพธิ์เสด็จ"}, {"no": "85", "license": "80-2-01446", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางจิตรา ผะกากรอง", "place": "น้ำดื่มผะกากรอง", "addr": "181/7 ซอยบางงัน ถนนอ้อมค่าย หมู่ 2 ต.ท่าซัก"}, {"no": "94", "license": "80-2-03046", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายศุภชัย แก่นสุวรรณ", "place": "ส. วอเตอร์เกท", "addr": "3/3 หมู่ 2 ต.ปากนคร"}, {"no": "95", "license": "80-2-03246", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายบัณฑิต ณ นคร", "place": "น้ำดื่มบ้านชะเมา", "addr": "133/1 หมู่ 6 ต.ท่าเรือ"}, {"no": "112", "license": "80-2-01747", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายณฤทธิ์ อนันตเสรีวิทยา", "place": "กังไอซ์", "addr": "198 ถนนศรีธรรมโศก หมู่ 1 ต.ในเมือง"}, {"no": "118", "license": "80-2-03947", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางลำใย โสทรจิตต์", "place": "น้ำดื่มมรกต", "addr": "79/4 หมู่ 1 ต.ท่างิ้ว"}, {"no": "121", "license": "80-2-04347", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายปฏิพลซ์  เอี้ยวกฤตยากร", "place": "นครศรีดริงค์กิ้งวอเตอร์", "addr": "369 หมู่ 10 ต.ท่าเรือ"}, {"no": "122", "license": "80-2-00148", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายกิจติศักดิ์ ชุมดำ", "place": "น้ำดื่มขุนพรหม", "addr": "105/11 หมู่ 1 ต.โพธิ์เสด็จ"}, {"no": "136", "license": "80-2-02148", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายสมคิด นนทา", "place": "ห้าดาว", "addr": "31 ถนนพระบรมธาตุ ต.ในเมือง"}, {"no": "146", "license": "80-2-00849", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสุรางค์รัตน์ จันทรักษา", "place": "น้ำดื่มธารารัตน์", "addr": "26/2 ถนนราชดำเนิน หมู่ 2 ต.ท่าวัง"}, {"no": "147", "license": "80-2-00949", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวดวงกมล นิพัทพงษ์", "place": "น้ำดื่มมหาชัย", "addr": "136 ถนนกะโรม หมู่ 6 ต.ท่างิ้ว"}, {"no": "150", "license": "80-2-01549", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายมะแอน มัทธพงศ์", "place": "น้ำดื่มซัลน่า", "addr": "53/5 หมู่ 10 ต.ท่าเรือ"}, {"no": "169", "license": "80-2-01850", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายอนุชา  เตชะณัฎฐพันธ์", "place": "บิลเลี่ยนเบฟเวอร์เรจ", "addr": "21 ซอยก้าวหน้า2 ถนนนคร-ปากพนัง ต.ในเมือง"}, {"no": "172", "license": "80-2-02150", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายยงยุทธ มุณีรัตน์", "place": "น้ำดื่มนิวเวฟ", "addr": "68 หมู่ 5 ต.โพธิ์เสด็จ"}, {"no": "180", "license": "80-2-00351", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายวสันต์ จิตต์ประสงค์", "place": "จำปาขอมน้ำดื่ม", "addr": "40/1 ซอยอิสลามพัฒนา หมู่ 1 ต.ในเมือง"}, {"no": "181", "license": "80-2-00551", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางเบญจมาศ เอื้อตระการวิวัฒน์", "place": "น้ำดื่มเบญจมาศ", "addr": "1780/106 ถนนท่าโพธิ์ หมู่ 2 ต.ท่าวัง"}, {"no": "185", "license": "80-2-01251", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวอลิษา วงศ์สม", "place": "น้ำดื่มพืชผา", "addr": "153/107 ซอยพืชผา ถนนพัฒนาการคูขวาง หมู่ 3 ต.คลัง"}, {"no": "190", "license": "80-2-01951", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางอารยา ศักดิ์สงวน", "place": "ศูนย์น้ำดื่มมงคลทิพย์วัดใหญ่ชัยมงคล", "addr": "2222/33 ถนนราชดำเนิน หมู่ 2 ต.ท่าวัง"}, {"no": "203", "license": "80-2-00752", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "ห้างหุ้นส่วนจำกัด สวี้ต วอเตอร์", "place": "หจก.สวี๊ต วอเตอร์", "addr": "928/1-2 ถนนราชดำเนิน หมู่ 3 ต.คลัง"}, {"no": "205", "license": "80-2-01052", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท / น้ำแข็ง", "name": "บริษัท ยงกาต์พัฒนา จำกัด", "place": "บริษัท ยงกาต์พัฒนา จำกัด", "addr": "9/9 ถนนราชดำเนิน ต.ท่าวัง"}, {"no": "210", "license": "80-2-02152", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวพัชราภรณ์ ลิขิตลักษณ์", "place": "วิทัตวัฒนา", "addr": "83/3 หมู่ 10 ต.ท่าเรือ"}, {"no": "224", "license": "80-2-01153", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายสุรโรจน์  นวลมังสอ", "place": "น้ำดื่มตรานโม", "addr": "5/1 ถนนอัศวรักษ์1 หมู่ 1 ต.ในเมือง"}, {"no": "228", "license": "80-2-01653", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางรุจิรา เขตนคร", "place": "น้ำดื่มรีไลท์", "addr": "26/6 หมู่ 3 ต.นาเคียน"}, {"no": "231", "license": "80-2-01953", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายภานุวัฒน์ ยุทธิวัฒน์", "place": "น้ำดื่มนราทิพย์", "addr": "14/1 ซอยสุขสมบูรณ์ ถนนนครศรีธรรมราช-ปากพนัง หมู่ 10 ต.ท่าเรือ"}, {"no": "233", "license": "80-2-02153", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวกรกนกฃ วัฒนสมัย", "place": "น้ำดื่มหงส์ฟ้า", "addr": "264 ถนนศรีธรรมโศก หมู่ 1 ต.ในเมือง"}, {"no": "251", "license": "80-2-01954", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท / เครื่องดื่มในภาชนะบรรจุที่ปิดสนิท", "name": "บริษัท ซิลเวอร์เบเกอรี่แอนด์ฟู้ด จำกัด", "place": "บริษัท ซิลเวอร์เบเกอรี่แอนด์ฟู้ด จำกัด", "addr": "90/87 ถนนปากนคร หมู่ 3 ต.คลัง"}, {"no": "253", "license": "80-2-02354", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายพิชัย โมฮารา", "place": "น้ำดื่ม ไอเดีย กรุ๊ป", "addr": "516/6 หมู่ 1 ต.ปากพูน"}, {"no": "261", "license": "80-2-03354", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวกมลนันทน์  ธานินทร์พงศ์", "place": "น้ำดื่มกมลนันทน์", "addr": "186/196 หมู่ 9 ต.โพธิ์เสด็จ"}, {"no": "264", "license": "80-2-00255", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายธงชาติ แดงเอียด", "place": "ช.นครน้ำดื่ม", "addr": "1 ซอยสุขแก้ว ถนนราชดำเนิน หมู่ 1 ต.ในเมือง"}, {"no": "276", "license": "80-2-02455", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายเจนศิลป์ สิริวงศ์สถาพร", "place": "ร้านหงส์มารวย", "addr": "14/17 ถนนกะโรม หมู่ 1 ต.โพธิ์เสด็จ"}, {"no": "279", "license": "80-2-02755", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวกนกวรรณ อินทรายุทธิ์", "place": "น้ำดื่ม B. NEW THONG WATER", "addr": "12/3 ถนนเอเชีย ต.โพธิ์เสด็จ"}, {"no": "289", "license": "80-2-04255", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายอมเรศ ธรรมสูน", "place": "บุญส่งการค้า", "addr": "29/1 หมู่ 5 ต.นาทราย"}, {"no": "294", "license": "80-2-05355", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางศุภภาภรณ์  หลีอาภรณ์", "place": "ร้าน น้ำดื่มต้นข้าว (น้ำดื่มตราต้นข้าว)", "addr": "414/1 หมู่ 6 ต.ท่าเรือ"}, {"no": "313", "license": "80-2-02756", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายอารยะ  ชนะกาญจน์", "place": "ดราก้อน", "addr": "39/4 หมู่ 1 ต.โพธิ์เสด็จ"}, {"no": "320", "license": "80-2-03856", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสุรัตน์ อัยราคม", "place": "น้ำดื่มอัยรา", "addr": "351/128 หมู่ 5 ต.ปากพูน"}, {"no": "321", "license": "80-2-03956", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายอรุณ  ชูสุวรรณ์", "place": "โรงน้ำดื่มสำนักหลุมพอ", "addr": "11/11 หมู่ 6 ต.ท่างิ้ว"}, {"no": "326", "license": "80-2-04556", "type": "น้ำแข็ง", "name": "ห้างหุ้นส่วนจำกัด แนน นิว ทวีทรัพย์", "place": "ห้างหุ้นส่วนจำกัด แนน นิว ทวีทรัพย์", "addr": "131/6 หมู่ 3 ต.โพธิ์เสด็จ"}, {"no": "329", "license": "80-2-00757", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวจุรีรัตน์  เมฆปลัด", "place": "น้ำดื่มสี่ดาว", "addr": "25/4 ซอยพัฒนา2 ถนนราชดำเนิน ต.ในเมือง"}, {"no": "356", "license": "80-2-04357", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางออมสิน  สุวรรณชาติ", "place": "โพธิ์ทอง น้ำดื่ม", "addr": "100 หมู่ 5 ต.โพธิ์เสด็จ"}, {"no": "361", "license": "80-2-05057", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวปุณฑริก จันทร์มา", "place": "น้ำดื่มเรนเดียร์ 2", "addr": "138/2 หมู่ 6 ต.ท่างิ้ว"}, {"no": "383", "license": "80-2-01458", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวศุภกาญจน์ แซ่ภู่", "place": "น้ำดื่มบางจาก", "addr": "97/2 หมู่ 6 ต.บางจาก"}, {"no": "385", "license": "80-2-01658", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายเอกพล คูบูรณ์", "place": "น้ำดื่มเขามหาชัย", "addr": "131/1 หมู่ 5 ต.ท่างิ้ว"}, {"no": "386", "license": "80-2-01758", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางมนชยา  มุสิกันฑ์", "place": "ลายวิลัยน้ำดื่ม", "addr": "69/1 หมู่ 9 ต.กำแพงเซา"}, {"no": "389", "license": "80-2-02358", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายอำมร  อารีชล", "place": "ร้านช่างมร", "addr": "555/308 หมู่ 5 ต.ปากพูน"}, {"no": "396", "license": "80-2-03358", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวฉัตรรัตน์ พุฒิวีระพงศ์", "place": "น้ำดื่มปันรัก", "addr": "362/17 หมู่ 1 ต.ปากพูน"}, {"no": "401", "license": "80-2-04058", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายศรชัย  เจียจิราพัทธนันท์", "place": "พัทธนันท์", "addr": "42/6 หมู่ 1 ต.ปากพูน"}, {"no": "406", "license": "80-2-00159", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวเบญจมาภรณ์  จุลรัตน์", "place": "น้ำดื่มจีว่า", "addr": "46/5 หมู่ 2 ต.ปากพูน"}, {"no": "417", "license": "80-2-02059", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายวิโชติ เจดีรัตน์", "place": "น้ำดื่มพุ่มทิพย์", "addr": "52 หมู่ 3 ต.ไชยมนตรี"}, {"no": "427", "license": "80-2-03659", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาววันดี ยาทรัพย์", "place": "วันดี น้ำดื่ม", "addr": "19 หมู่ 9 ต.นาเคียน"}, {"no": "436", "license": "80-2-01460", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "กองทุนหมู่บ้าน บ้านสวนจันทร์", "place": "กองทุนหมู่บ้าน บ้านสวนจันทร์", "addr": "301/1 หมู่ 5 ต.ปากพูน"}, {"no": "444", "license": "80-2-02360", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางเสาวณี ราชอุไร", "place": "น้ำดื่มฅนฅอน", "addr": "126/3 หมู่ 3 ต.ท่าไร่"}, {"no": "450", "license": "80-2-03360", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายวิสูตร  รัตนพาหุ", "place": "น้ำดื่มไทย", "addr": "60/8 ซอยหนองเนียร ถนนโพธิ์เสด็จ-ทุ่งแย้ หมู่ 6 ต.โพธิ์เสด็จ"}, {"no": "461", "license": "80-2-04860", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "ส.ท. ณัฐพงศ์  สุทธิภิบาล", "place": "น้ำดื่มเด่นสยาม", "addr": "181/1 หมู่ 9 ต.กำแพงเซา"}, {"no": "466", "license": "80-2-00361", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสุปรียา  สุพรรณอาสน์", "place": "โอโซน-ดี", "addr": "103 หมู่ 3 ต.นาทราย"}, {"no": "480", "license": "80-2-02261", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายชัยรัชต์พงษ์  แก้วรัตน์", "place": "น้ำดื่มแกริค", "addr": "27/8 หมู่ 6 ต.โพธิ์เสด็จ"}, {"no": "491", "license": "80-2-00462", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "บริษัท ทวินโลตัส เฟรช วอเตอร์ จำกัด", "place": "บริษัท ทวินโลตัส เฟรช วอเตอร์ จำกัด", "addr": "6 ถนนพัฒนาการคูขวาง หมู่ - ต.ในเมือง"}, {"no": "514", "license": "80-2-03262", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายประพัส สพานทอง", "place": "วิสาหกิจชุมชนวัดป่ายาง", "addr": "174/1 หมู่ 4 ต.ท่างิ้ว"}, {"no": "528", "license": "80-2-01863", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายธนากร  ธนาภัทรเวคิน", "place": "โรงน้ำดื่ม ธนากร", "addr": "137/10 หมู่ 4 ต.ปากพูน"}, {"no": "532", "license": "80-2-02363", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายเลิศชัย  ช่วยขุน", "place": "โรงน้ำดื่ม จ้าวจอม", "addr": "113 หมู่ 2 ต.โพธิ์เสด็จ"}, {"no": "540", "license": "80-2-00164", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท / น้ำแข็ง", "name": "ห้างหุ้นส่วนจำกัด คิงส์วอเตอร์", "place": "ห้างหุ้นส่วนจำกัด คิงส์วอเตอร์", "addr": "1204/39,1204/36,1204/78 ถนนปากนคร ต.คลัง"}, {"no": "555", "license": "80-2-02064", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวศิริพร  วังชัยศรี", "place": "น้ำดื่ม ภูหินหงส์", "addr": "148/1 หมู่ 7 ต.ท่างิ้ว"}, {"no": "566", "license": "80-2-01265", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "โรงเรียน ท่านครญาณวโรภาสอุทิศ", "place": "โรงเรียนท่านครญาณวโรภาสอุทิศ", "addr": "119 ถนนวัดโบสถ์ ต.ปากนคร"}, {"no": "569", "license": "80-2-01565", "type": "น้ำแข็ง", "name": "ห้างหุ้นส่วนจำกัด ท่าแพบริการ", "place": "ห้างหุ้นส่วนจำกัด ท่าแพบริการ", "addr": "286/12 หมู่ 1 ต.ปากพูน"}, {"no": "574", "license": "80-2-02065", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายวิรัช  สุขอนันต์", "place": "รัชนก น้ำดื่ม", "addr": "41/2 หมู่ 1 ต.ท่างิ้ว"}, {"no": "585", "license": "80-2-01066", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางรักษ์ชล  พัสดุสาร", "place": "น้ำดื่มดับเบิลที", "addr": "1832/13 ถนนราชนิคม ต.ท่าวัง"}, {"no": "590", "license": "80-2-01566", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายนิรุส  โนวนัตย์", "place": "น้ำดื่มโบนัส (สาขา 2)", "addr": "100/7 หมู่ 4 ต.ปากพูน"}, {"no": "612", "license": "80-2-00767", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท / เครื่องดื่มในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวธัญญา  พงค์สีพุด", "place": "บีโอ สวีท วอเตอร์", "addr": "191/37 หมู่ 2 ต.ปากนคร"}, {"no": "618", "license": "80-2-01567", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางปพิชญา  แมนชีพ", "place": "โรงน้ำสำเภาแก้ว", "addr": "27/12 หมู่ 16 ต.ท่าเรือ"}, {"no": "632", "license": "80-2-03067", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายวสันต์  บุศยาจารย์", "place": "น้ำดื่มศรีอมร", "addr": "133/1 หมู่ 5 ต.ท่าไร่"}, {"no": "658", "license": "80-2-02568", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายอดิเรก  อินทร์สุไว", "place": "ร้านซีเอฟดับเบิ้ลยู เชอรี่ พลัส", "addr": "11/11 หมู่ 6 ต.ท่างิ้ว"}, {"no": "661", "license": "80-2-00169", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "โรงเรียนวิทยาศาสตร์จุฬาภรณราชวิทยาลัย นครศรีธรรมราช", "place": "โรงเรียนวิทยาศาสตร์จุฬาภรณราชวิทยาลัย นครศรีธรรมราช", "addr": "120 หมู่ 1 ต.บางจาก"}], "ทุ่งสง": [{"no": "4", "license": "80-1-52529", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "ห้างหุ้นส่วนจำกัด สมภพ", "place": "ห้างหุ้นส่วนจำกัด สมภพ", "addr": "25 ถนนประสานมิตร ต.ปากแพรก"}, {"no": "5", "license": "80-2-02549", "type": "น้ำแข็ง", "name": "นายวิชัย  รัตนพันธ์", "place": "รัตนธารา", "addr": "12/2 ถนนทุ่งสง-บางขัน หมู่ 10 ต.ควนกรด"}, {"no": "18", "license": "80-2-00338", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายสมบูรณ์  ดวงแก้ว", "place": "น้ำดื่มพี.พี.", "addr": "94 หมู่ 6 ต.ที่วัง"}, {"no": "25", "license": "80-2-01839", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายคณิต  แซ่ตั้ง", "place": "น้ำดื่มพรเพชร", "addr": "12/3 ซอย2 ถนนประชาอุทิศ ต.ปากแพรก"}, {"no": "28", "license": "80-2-00140", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท / น้ำแข็ง", "name": "บริษัท เตยหอมอุตสาหกรรม จำกัด", "place": "บริษัท เตยหอมอุตสาหกรรม จำกัด", "addr": "66/4 ถนนท่าแพใต้ ต.ปากแพรก"}, {"no": "59", "license": "80-2-00743", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายคณิศร  ชูแก้วร่วง", "place": "น้ำดื่มห้าดาว", "addr": "52/4 หมู่ 2 ต.ชะมาย"}, {"no": "64", "license": "80-2-00444", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายกำพล  ณ พัทลุง", "place": "น้ำดื่มพี.เอส.", "addr": "113 หมู่ 3 ต.ชะมาย"}, {"no": "65", "license": "80-2-00544", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางนาตยา นุ่นเขียว", "place": "น้ำดื่มวรินธร", "addr": "259/24 หมู่ 1 ต.ชะมาย"}, {"no": "81", "license": "80-2-00246", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางรัตนา ตาดทอง", "place": "น้ำดื่มรัตนา", "addr": "68 หมู่ 11 ต.ควนกรด"}, {"no": "90", "license": "80-2-02646", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายประสาร  รุจิระศักดิ์", "place": "สถาบันเทคโนโลยีราชมงคล วิทยาเขตนครศรีธรรมราช", "addr": "109 ถนนเพชรเกษม หมู่ 2 ต.ถ้ำใหญ่"}, {"no": "97", "license": "80-2-03746", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาววัชรี  เชยบัวแก้ว", "place": "วัชรียูนิค", "addr": "429/1 ถนนนครศรี-ทุ่งสง ต.ปากแพรก"}, {"no": "101", "license": "80-2-04346", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางจุฑารัตน์  จันทร์ทิพย์", "place": "น้ำดื่มรักษ์ไทย", "addr": "65 ถนนท่าแพใต้ ต.ปากแพรก"}, {"no": "128", "license": "80-2-01148", "type": "น้ำแข็ง", "name": "บริษัท น้ำแข็งแฮปปี้ จำกัด", "place": "บริษัทน้ำแข็ง แฮปปี้  จำกัด", "addr": "52/1 หมู่ 7 ต.หนองหงส์"}, {"no": "142", "license": "80-2-00349", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายวัชรา รัตนบุรี", "place": "สิงห์ทองกิจรุ่งเรือง", "addr": "182 หมู่ 9 ต.ควนกรด"}, {"no": "143", "license": "80-2-00449", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายไสว วงศ์วุฒิสาโรจน์", "place": "หสม.ร่วมค้าพัฒนาเกษตรยั่งยืน", "addr": "88 ถนนนคร-ทุ่งสง หมู่ 7 ต.ถ้ำใหญ่"}, {"no": "145", "license": "80-2-00749", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางขนิษฐา  ศิริศิลป์", "place": "นันทรัตน์น้ำดื่ม", "addr": "277 หมู่ 4 ต.ควนกรด"}, {"no": "165", "license": "80-2-01150", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวอำภา ชาญรบ", "place": "น้ำดื่มสลิลทิพย์", "addr": "45 ซอยหนองแสง ถนนรุ่งเมือง หมู่ 2 ต.ควนกรด"}, {"no": "189", "license": "80-2-01851", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางพวงรัตน์  มีแก้ว", "place": "น้ำดื่มพระนาง", "addr": "186 หมู่ 5 ต.นาหลวงเสน"}, {"no": "219", "license": "80-2-00353", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายชัยวัฒน์ สุมงคล", "place": "กลุ่มผลิตน้ำดื่มชุมชนบ้านหนองท่อม", "addr": "157/1 หมู่ 7 ต.เขาโร"}, {"no": "232", "license": "80-2-02053", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสิริประภา สุชาติพงศ์", "place": "น้ำดื่มสิริน้ำทิพย์", "addr": "16/4 หมู่ 1 ต.น้ำตก"}, {"no": "240", "license": "80-2-00154", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายจรูญ พรหมดนตรี", "place": "คงคาวอร์เตอร์", "addr": "59/10 หมู่ 6 ต.หนองหงส์"}, {"no": "247", "license": "80-2-01254", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายสรวิศ เพ็ชรมาตรศรี", "place": "กลุ่มผลิตน้ำดื่มตำบลนาโพธิ์", "addr": "131 หมู่ 2 ต.นาโพธิ์"}, {"no": "291", "license": "80-2-04955", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสุชาดา  เขียวจินดา", "place": "ส.สมบูรณ์ น้ำดื่ม", "addr": "156/1 หมู่ 6 ต.ชะมาย"}, {"no": "304", "license": "80-2-01456", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวปุณฑริก จันทร์มา", "place": "น้ำดื่มเรนเดียร์", "addr": "147 หมู่ 2 ต.หนองหงส์"}, {"no": "345", "license": "80-2-02857", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวมรินดา สุดใจ", "place": "น้ำดื่มตองหนึ่ง", "addr": "18 หมู่ 5 ต.นาหลวงเสน"}, {"no": "360", "license": "80-2-04957", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาววลัลดา เจริญไพบูลย์นุกิจ", "place": "ดลลตา", "addr": "16/2 หมู่ 2 ต.ชะมาย"}, {"no": "369", "license": "80-2-06057", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "ชจิชา  ปานเมือง", "place": "น้ำดื่มบีไลฟ์", "addr": "207/1 หมู่ 12 ต.เขาขาว"}, {"no": "371", "license": "80-2-06257", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายพชรพล  เพียรดี", "place": "ต้นหอมน้ำดื่ม", "addr": "330 หมู่ 6 ต.กะปาง"}, {"no": "381", "license": "80-2-01158", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายอาคม  สะคุนา", "place": "น้ำดื่มสกุณา", "addr": "77 หมู่ 11 ต.เขาขาว"}, {"no": "402", "license": "80-2-04158", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "กรรญรัศม์  ทองรอด", "place": "น้ำดื่ม ทองพันธ์ชั่ง", "addr": "169 หมู่ 4 ต.นาไม้ไผ่"}, {"no": "418", "license": "80-2-02259", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายอนุวัฒน์ รักษ์ศรีทอง", "place": "น้ำดื่มศรีทองสลิม", "addr": "10/3 หมู่ 4 ต.ชะมาย"}, {"no": "422", "license": "80-2-02759", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท / น้ำแข็ง", "name": "บริษัท ริชเชส วอเทอร์ จำกัด", "place": "บริษัท ริชเชส วอเทอร์ จำกัด", "addr": "273 หมู่ 6 ต.กะปาง"}, {"no": "430", "license": "80-2-00560", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวอุไร  อรุณเมธี", "place": "น้ำดื่มเพียว&พี", "addr": "237 หมู่ 5 ต.ชะมาย"}, {"no": "506", "license": "80-2-02362", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางฟองเพ็ญ  สุขราช", "place": "พูลสุข", "addr": "71 หมู่ 1 ต.ควนกรด"}, {"no": "519", "license": "80-2-00563", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "ห้างหุ้นส่วนจำกัด ดอกบัวหลวง", "place": "ห้างหุ้นส่วนจำกัด ดอกบัวหลวง", "addr": "100/5 หมู่ 7 ต.ชะมาย"}, {"no": "542", "license": "80-2-00464", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายกิจจา  ไอยราคม", "place": "ร้านไอยราพานิชย์", "addr": "189 หมู่ 11 ต.ที่วัง"}, {"no": "545", "license": "80-2-00864", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายจิรวุฒิ  ศรีสิริ", "place": "ศรีสิริ วอเตอร์", "addr": "195/2 ถนนสำโรงจันดี หมู่ 5 ต.นาหลวงเสน"}, {"no": "557", "license": "80-2-00265", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางเหมือนฝัน  จิตรเอื้อกุล", "place": "แคร์ วอเทอร์", "addr": "256/1,256/2 หมู่ 8 ต.ชะมาย"}, {"no": "558", "license": "80-2-00365", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางอรวรรณ  โอกาส", "place": "โรงผลิตน้ำดื่มรุ่งทิพย์", "addr": "389 หมู่ 5 ต.นาโพธิ์"}, {"no": "583", "license": "80-2-00866", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาววรรณภรณ์  พรชัย", "place": "น้ำดื่มมิราเคิล", "addr": "240/10-11 ถนนทุ่งสง-นครศรีธรรมราช ต.ปากแพรก"}, {"no": "602", "license": "80-2-02766", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสุพนา  ดวงแก้ว", "place": "น้ำดื่มภูผา", "addr": "386 หมู่ 7 ต.ที่วัง"}, {"no": "609", "license": "80-2-00367", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "บริษัท เตยหอมอุตสาหกรรม จำกัด", "place": "บริษัท เตยหอมอุตสาหกรรม จำกัด", "addr": "140 หมู่ 5 ต.นาหลวงเสน"}, {"no": "630", "license": "80-2-02867", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "ว่าที่ร้อยตรี อรุณพร  จันทรเสน", "place": "โรงผลิตน้ำดื่มบ้านไสเหนือ", "addr": "4 หมู่ 8 ต.นาหลวงเสน"}], "ขนอม": [{"no": "9", "license": "80-2-00435", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายจารีย์  ขนอม", "place": "น้ำดื่มขนอม", "addr": "12/1 หมู่ 2 ต.ขนอม"}, {"no": "80", "license": "80-2-01645", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางชุติมา  สุวรรณอำภา", "place": "ศรีสยามกรุ๊ป", "addr": "48/27 หมู่ 3 ต.ขนอม"}, {"no": "384", "license": "80-2-01558", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายคำนวณ  มุสิกลาย", "place": "น้ำดื่ม ขนอมพิทยา", "addr": "93 หมู่ 12 ต.ขนอม"}, {"no": "421", "license": "80-2-02659", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายเริงชัย  เสมอรูป", "place": "น้ำดื่มเพชรเริงชัย", "addr": "32/2 หมู่ 7 ต.ขนอม"}, {"no": "492", "license": "80-2-00662", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวเพ็ญพักตร์  คงอินทร์", "place": "คณพศ วอเตอร์", "addr": "10/8 หมู่ 9 ต.ขนอม"}, {"no": "635", "license": "80-2-00268", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวนุชรัตน์  หนูขัน", "place": "อุดมพาณิชย์", "addr": "18 หมู่ 12 ต.ขนอม"}, {"no": "636", "license": "80-2-00368", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางอาภรณ์  คงนุ่น", "place": "น้ำดื่มภูมิใจ", "addr": "85/2 หมู่ 13 ต.ขนอม"}], "ฉวาง": [{"no": "11", "license": "80-2-00635", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายไมตรี สิทธิยศ", "place": "อินทนิลน้ำดื่ม", "addr": "140/1 ซอยหมอสมพร ถนนจันดี-ทุ่งใหญ่ หมู่ 2 ต.จันดี"}, {"no": "40", "license": "80-2-00441", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายปิยพงศ์ ศรีสุขสวัสดิ์", "place": "น้ำดื่มเดนซ่า", "addr": "631-632 ต.จันดี"}, {"no": "58", "license": "80-2-00643", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายสงบ วัฒนา", "place": "จินต์ภาณีน้ำดื่ม", "addr": "126/1 หมู่ 3 ต.นากะชะ"}, {"no": "93", "license": "80-2-02946", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวศรีอาภรณ์ สุขขัง", "place": "บรรณวัชร", "addr": "150 หมู่ 1 ต.ห้วยปริก"}, {"no": "106", "license": "80-2-00647", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายสุชาติ ศรีจันทร์", "place": "น้ำดื่มเจจิ", "addr": "73 หมู่ 12 ต.ละอาย"}, {"no": "130", "license": "80-2-01548", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางเบญจรัตน์  อู่ทรงธรรม", "place": "จันดีอาร์โอ", "addr": "427/4 หมู่ 3 ต.จันดี"}, {"no": "139", "license": "80-2-02848", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางนงเยาว์ ฤทธิ์รังสรรค์", "place": "น้ำดื่มประชาชื่น", "addr": "171/1 ถนนจันดี-สวนขัน หมู่ 3 ต.จันดี"}, {"no": "140", "license": "80-2-02948", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายณรงค์ศักดิ์ รักษาแก้ว", "place": "มีชัยน้ำดื่ม", "addr": "215 หมู่ 1 ต.ห้วยปริก"}, {"no": "170", "license": "80-2-01950", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท / น้ำแข็ง", "name": "ห้างหุ้นส่วนจำกัด โรงน้ำแข็ง ยี่ฮั้ว น้ำแข็งหลอด", "place": "ห้างหุ้นส่วนจำกัด โรงน้ำแข็ง ยี่ฮั้ว น้ำแข็งหลอด", "addr": "121/2 หมู่ 2 ต.จันดี"}, {"no": "187", "license": "80-2-01651", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายสำราญ วิเชียร", "place": "น้ำดื่มเอส.เอ็ม.แอล", "addr": "186/4 หมู่ 8 ต.ละอาย"}, {"no": "191", "license": "80-2-02151", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายโภควัฒน์ ศรีอักษร", "place": "หนองท่อมน้ำดื่ม", "addr": "178/1 หมู่ 5 ต.ไม้เรียง"}, {"no": "194", "license": "80-2-02551", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางผกายเดือน มนต์แก้ว", "place": "ผนัชชาน้ำดื่ม", "addr": "94/1 หมู่ 6 ต.ฉวาง"}, {"no": "195", "license": "80-2-02651", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายประสิทธิ์ ไชยรัตน์", "place": "ทิพย์ตาปี", "addr": "193 หมู่ 1 ต.ฉวาง"}, {"no": "213", "license": "80-2-02852", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายวุฒิเลิศ บุญนำ", "place": "ทานพอน้ำดื่ม", "addr": "527/1 หมู่ 3 ต.ไม้เรียง"}, {"no": "238", "license": "80-2-02853", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "ร้อยตรี ราชมนต์ ด้วงเอี่ยม", "place": "กลุ่มแม่บ้านหมู่ที่ 4", "addr": "61/1 หมู่ 4 ต.ละอาย"}, {"no": "254", "license": "80-2-02454", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายจักรพรรดิ สิรันทวิเนติ", "place": "น้ำดื่มไอริ", "addr": "189/1 ถนนทานพอ-ถ้ำพรรณรา หมู่ 5 ต.นากะชะ"}, {"no": "268", "license": "80-2-00655", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายประทีป สรรเพ็ชร์", "place": "น้ำดื่มโคกสมอ", "addr": "103 หมู่ 7 ต.นากะชะ"}, {"no": "348", "license": "80-2-03157", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายเจียร  พรหมรัตน์", "place": "เจียรการค้า", "addr": "145 หมู่ 13 ต.ละอาย"}, {"no": "358", "license": "80-2-04757", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายสมนึก  ไหมบุญแก้ว", "place": "โรงเรียนฉวางรัชดาภิเษก", "addr": "137 หมู่ 8 ต.ไสหร้า"}, {"no": "378", "license": "80-2-00858", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายโชคดี  บุญชู", "place": "วิสาหกิจชุมชนโครงการผลิตทุ่งกระจูดน้ำดื่ม", "addr": "36 หมู่ 7 ต.นาแว"}, {"no": "380", "license": "80-2-01058", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "ศักดิ์  สิขิวัฒน์", "place": "น้ำดื่มวีนัสกานต์", "addr": "7/2 หมู่ 2 ต.นากะชะ"}, {"no": "388", "license": "80-2-02258", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายธีรพล  สุมน", "place": "น้ำดื่มสุมน", "addr": "102/1 หมู่ 5 ต.นาแว"}, {"no": "408", "license": "80-2-00659", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางผ่องศรี  แจ่มจรัส", "place": "น้ำดื่มสวัสดี", "addr": "84/4 หมู่ 8 ต.ไม้เรียง"}, {"no": "412", "license": "80-2-01259", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "หนึ่งฤทัย  วิเศษแก้ว", "place": "น้ำดื่มเพชรน้ำหนึ่ง", "addr": "1 หมู่ 4 ต.นาเขลียง"}, {"no": "512", "license": "80-2-02962", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "โรงเรียน เจริญวิทย์", "place": "โรงเรียนเจริญวิทย์", "addr": "171 หมู่ 9 ต.ไสหร้า"}, {"no": "541", "license": "80-2-00364", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางเกศราภรณ์  คชประภา", "place": "โรงน้ำดื่มอุ่นไอริณ", "addr": "95 หมู่ 17 ต.ละอาย"}, {"no": "586", "license": "80-2-01166", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวกัญญารัตน์  จงจิตร", "place": "เอ็ม แอนด์ พี วอเตอร์", "addr": "105/1 หมู่ 1 ต.ละอาย"}, {"no": "622", "license": "80-2-01967", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายเจษฎาพงค์  สิขิวัฒน์", "place": "โรงน้ำดื่มศิริพงค์", "addr": "274 หมู่ 5 ต.ห้วยปริก"}], "ชะอวด": [{"no": "12", "license": "80-2-00636", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายกิติศักดิ์  ชินศรี", "place": "น้ำดื่มเค.เอส.", "addr": "53 หมู่ 5 ต.ชะอวด"}, {"no": "22", "license": "80-2-01339", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายประกอบ ชูแก้ว", "place": "ชูแก้วพานิชย์", "addr": "33/3 หมู่ 2 ต.เกาะขันธ์"}, {"no": "42", "license": "80-2-00741", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายสุรเชษฐ์ กรรณสุรางค์", "place": "น้ำดื่มสดชื่น", "addr": "310 หมู่ 1 ต.ขอนหาด"}, {"no": "51", "license": "80-2-00942", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายอภินันท์ แซ่โค้ว", "place": "ทรัพย์ในดิน", "addr": "12/2 หมู่ 2 ต.บ้านตูล"}, {"no": "70", "license": "80-2-00345", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายเจริญ เพ็งทิพย์", "place": "กลุ่มออมทรัพย์บ้านหนองจิก", "addr": "46/3 หมู่ 2 ต.นางหลง"}, {"no": "148", "license": "80-2-01149", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางเบ็ญจะ ชูช่วย", "place": "น้ำดื่มกันตพล", "addr": "1347/1 ซอยบ้านพักครูคุรุมิตร หมู่ 9 ต.ชะอวด"}, {"no": "174", "license": "80-2-02350", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสำฤทธิ์  แก้วหนู", "place": "น้ำดื่มเกตุมณี", "addr": "33/1 หมู่ 2 ต.บ้านตูล"}, {"no": "200", "license": "80-2-00452", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายสุฤทธิชัย ณ นคร", "place": "ณ นคร-น้ำดื่ม", "addr": "32/1 หมู่ 4 ต.เกาะขันธ์"}, {"no": "217", "license": "80-2-00153", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท / เครื่องดื่มในภาชนะบรรจุที่ปิดสนิท", "name": "ห้างหุ้นส่วนจำกัด พี.เอ็น.อี ฟู้ดส์", "place": "หจก.พี.เอ็น.อี ฟู้ดส์", "addr": "283/19 หมู่ 3 ต.ท่าประจะ"}, {"no": "226", "license": "80-2-01453", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางอิ่มอ่อน  รักด้วง", "place": "น้ำดื่มสามปอ", "addr": "10 หมู่ 1 ต.ท่าประจะ"}, {"no": "235", "license": "80-2-02353", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "ดาบตำรวจ ธรานุชิต ไชยเดช", "place": "น้ำดื่มธารา", "addr": "84 หมู่ 2 ต.วังอ่าง"}, {"no": "237", "license": "80-2-02653", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายจำเริญ  บุรีภักดี", "place": "น้ำดื่มหยดเจริญ", "addr": "16/8ตึก/อาคารท่าเสม็ด หมู่ 1 ต.ท่าเสม็ด"}, {"no": "241", "license": "80-2-00254", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "ไพรัตน์  ธานีรัตน์", "place": "น้ำดื่มธานีรัตน์", "addr": "47/2 หมู่ 1 ต.ท่าประจะ"}, {"no": "252", "license": "80-2-02154", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายจรัญ สายน่วม", "place": "น้ำดื่มดีไลฟ์", "addr": "278 หมู่ 7 ต.เขาพระทอง"}, {"no": "334", "license": "80-2-01257", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายประกอบ  แก้วใจดี", "place": "น้ำดื่มตราบ้านตูน", "addr": "2/18 หมู่ 2 ต.บ้านตูล"}, {"no": "341", "license": "80-2-02357", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายปัญญา  พวงมณี", "place": "น้ำดื่มเนินอินทร์แก้ว", "addr": "138/1 หมู่ 3 ต.ชะอวด"}, {"no": "344", "license": "80-2-02757", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางนิชธาวัลย์ กัญจนกาญจน์", "place": "นิชธาวัลย์น้ำดื่ม", "addr": "19/3 หมู่ 6 ต.ชะอวด"}, {"no": "362", "license": "80-2-05157", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "พานิช  ตุ๊กสุวรรณ", "place": "ร้านน้ำดื่มกิตติพัฒน์", "addr": "52/5 หมู่ 4 ต.ควนหนองหงษ์"}, {"no": "377", "license": "80-2-00758", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายดุรงค์ฤทธิ์ เที่ยงสนิท", "place": "ที.เค.เซอร์วิส", "addr": "40 หมู่ 1 ต.ท่าประจะ"}, {"no": "382", "license": "80-2-01258", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "เทอดศักดิ์  เหมือนแก้ว", "place": "น้ำดื่มประดับเพชร", "addr": "127/1 หมู่ 4 ต.ท่าประจะ"}, {"no": "387", "license": "80-2-01958", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายพิสิฐ  ฤทธิชัย", "place": "น้ำดื่ม๙๙๙๙", "addr": "8/5 หมู่ 5 ต.เขาพระทอง"}, {"no": "404", "license": "80-2-04358", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายบัญชา  จันธิกาแก้ว", "place": "น้ำดื่มฉลอง", "addr": "23/1 หมู่ 4 ต.ท่าเสม็ด"}, {"no": "438", "license": "80-2-01660", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายคมสัน หนูมา", "place": "ร้านน้ำดื่มวันนที", "addr": "99/2 หมู่ 1 ต.ควนหนองหงษ์"}, {"no": "468", "license": "80-2-00761", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวจารุณี  ชุมทอง", "place": "โรงน้ำดื่มภักดี", "addr": "198/1 หมู่ 1 ต.ขอนหาด"}, {"no": "469", "license": "80-2-00861", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "โรงเรียนชะอวดวิทยาคาร", "place": "โรงเรียนชะอวดวิทยาคาร", "addr": "999 หมู่ 9 ต.ชะอวด"}, {"no": "484", "license": "80-2-02661", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายปรีชา  คงเดช", "place": "น้ำดื่มเพชรสมบูรณ์", "addr": "75/1 หมู่ 1 ต.ท่าประจะ"}, {"no": "513", "license": "80-2-03062", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายทรงศักดิ์ กัญชนะกาญจน์", "place": "โกเล้ง น้ำดื่ม", "addr": "46/8ควนหนองหงษ์ ซอย ถนน หมู่ 1 ต.ควนหนองหงษ์"}, {"no": "517", "license": "80-2-00163", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "ห้างหุ้นส่วนจำกัด เดอะวัน ทริปเปิ้ลไฟฟ์", "place": "ห้างหุ้นส่วนจำกัด เดอะวัน ทริปเปิ้ลไฟฟ์", "addr": "166/9 หมู่ 5 ต.ควนหนองหงษ์"}, {"no": "520", "license": "80-2-00763", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายศุภชัย  สุวรรณรัตน์", "place": "น้ำดื่ม อุดมทรัพย์", "addr": "50/1 หมู่ 6 ต.ท่าประจะ"}, {"no": "527", "license": "80-2-01663", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "กองทุนหมู่บ้าน บ้านสี่แยกโคกขันธ์", "place": "กองทุนหมู่บ้านบ้านสี่แยกโคกขันธ์", "addr": "64/1 หมู่ 2 ต.ท่าประจะ"}, {"no": "536", "license": "80-2-02763", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวพัชรา  นิตย์ปราณ", "place": "โรงน้ำดื่มเฟย์เดย์ เจริญทรัพย์", "addr": "199/1 หมู่ 4 ต.เกาะขันธ์"}, {"no": "613", "license": "80-2-01067", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายคมเพชร  คงเส้ง", "place": "น้ำดื่มออนิว", "addr": "224 หมู่ 4 ต.วังอ่าง"}, {"no": "625", "license": "80-2-02267", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "ห้างหุ้นส่วนจำกัด ก.ทรัพย์มั่นคง", "place": "ห้างหุ้นส่วนจำกัด ก.ทรัพย์มั่นคง", "addr": "157 หมู่ 3 ต.วังอ่าง"}, {"no": "664", "license": "80-2-00469", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "ห้างหุ้นส่วนจำกัด ก.ทรัพย์มั่นคง", "place": "หจก.ก.ทรัพย์มั่นคง (สาขา 1)", "addr": "328/2 หมู่ 3 ต.ท่าประจะ"}], "ลานสกา": [{"no": "13", "license": "80-2-00736", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายนิยม  นิลสุวรรณ", "place": "น้ำดื่มขุนน้ำ", "addr": "196/1 หมู่ 5 ต.กำโลน"}, {"no": "41", "license": "80-2-00641", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวอำพัน  สุขบำเพิง", "place": "น้ำดื่มวินเนอร์", "addr": "1 ถนนลานสกา-ไม้หลา หมู่ 3 ต.ลานสกา"}, {"no": "105", "license": "80-2-00447", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายธวัชชัย  เด็ดดวง", "place": "น้ำดื่มท่าดี", "addr": "108/1 หมู่ 2 ต.ท่าดี"}, {"no": "133", "license": "80-2-01948", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวยุพา  ปิยจันทร์", "place": "กลุ่มออมทรัพย์เพื่อการผลิตบ้านวัดโคกโพธิ์สถิตย์", "addr": "231 หมู่ 12 ต.กำโลน"}, {"no": "183", "license": "80-2-00851", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายสมพรศักดิ์ จิตบาน", "place": "น้ำดื่มธาราทิพย์", "addr": "233 หมู่ 6 ต.เขาแก้ว"}, {"no": "188", "license": "80-2-01751", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายกรีฑา ชำนะ", "place": "บ้านคีรีธรรม", "addr": "1/3 หมู่ 10 ต.กำโลน"}, {"no": "201", "license": "80-2-00552", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวศิริขวัญ จันทร์ธิบดี", "place": "น้ำดื่มชุมชนบ้านนอกนา", "addr": "105/2 หมู่ 6 ต.ลานสกา"}, {"no": "260", "license": "80-2-03154", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายจรวย ชัยเล็ก", "place": "ชุมชนบ้านตาหมอ", "addr": "205 หมู่ 6 ต.ขุนทะเล"}, {"no": "314", "license": "80-2-02856", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "โรงเรียนสวนกุหลาบวิทยาลัย นครศรีธรรมราช", "place": "โรงเรียนสวนกุหลาบวิทยาลัย นครศรีธรรมราช", "addr": "109 หมู่ 11 ต.กำโลน"}, {"no": "352", "license": "80-2-03557", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายธนพล  เจริญยศ", "place": "เจริญพาณิชย์ (น้ำดื่มริน)", "addr": "192/1 หมู่ 12 ต.ขุนทะเล"}, {"no": "399", "license": "80-2-03658", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายศตพล  สมวาที", "place": "น้ำดื่ม ดีว่า", "addr": "20 หมู่ 7 ต.ขุนทะเล"}, {"no": "428", "license": "80-2-03759", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายสมพงศ์ บุญราศรี", "place": "น้ำดื่มเอสพี", "addr": "67/1 หมู่ 1 ต.ท่าดี"}, {"no": "496", "license": "80-2-01162", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "บริษัท ป.อุดมโชค น้ำดื่ม จำกัด", "place": "บริษัท ป.อุดมโชค น้ำดื่ม จำกัด", "addr": "47/1 ถนนลานสกา-นครศรีฯ หมู่ 11 ต.กำโลน"}, {"no": "547", "license": "80-2-01164", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางจันทร์จิรา  ถนิมพาสน์", "place": "อนุรักษ์ น้ำดื่ม", "addr": "74 หมู่ 11 ต.กำโลน"}, {"no": "615", "license": "80-2-01267", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท / น้ำแข็ง", "name": "ห้างหุ้นส่วนจำกัด ธนวินท์อุตสาหกรรมน้ำแข็ง", "place": "ห้างหุ้นส่วนจำกัด ธนวินท์อุตสาหกรรมน้ำแข็ง", "addr": "285/1 หมู่ 9 ต.ขุนทะเล"}], "ท่าศาลา": [{"no": "15", "license": "80-2-00337", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายอรุณ  พิมเสน", "place": "น้ำดื่มแสงอรุณ", "addr": "207/3 ถนนนครศรี-สุราษฎร์ หมู่ 2 ต.กลาย"}, {"no": "30", "license": "80-2-00940", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายสมนึก ศรีศักดา", "place": "น้ำดื่มศักดา", "addr": "100 หมู่ 5 ต.สระแก้ว"}, {"no": "60", "license": "80-2-01043", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางอารีย์  นวลศรี", "place": "น้ำดื่มใบทอง", "addr": "53/2 หมู่ 6 ต.ท่าขึ้น"}, {"no": "72", "license": "80-2-00645", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางบำเพ็ญ จิตรมานะศักดิ์", "place": "มานะศิลป์", "addr": "137 หมู่ 1 ต.ท่าศาลา"}, {"no": "120", "license": "80-2-04247", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวสุนิต ห้องเม่ง", "place": "น้ำดื่มศักดิ์ชัย", "addr": "223 หมู่ 10 ต.กลาย"}, {"no": "167", "license": "80-2-01350", "type": "น้ำแข็ง", "name": "ห้างหุ้นส่วนจำกัด สินสุขเจริญออยล์", "place": "หจก.สินสุขเจริญออยล์", "addr": "39 หมู่ 11 ต.ท่าศาลา"}, {"no": "173", "license": "80-2-02250", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายนิยม  ยีสมัน", "place": "นิยมพาณิชย์", "addr": "90/6 หมู่ 5 ต.ท่าศาลา"}, {"no": "239", "license": "80-2-02953", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสมศรี ศรีวิสุทธิ์", "place": "ริมธารน้ำดื่ม", "addr": "165/7 หมู่ 6 ต.หัวตะพาน"}, {"no": "246", "license": "80-2-01054", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางจิตราภา กุนทอง", "place": "สุนันทาน้ำดื่ม", "addr": "9 หมู่ 8 ต.ตลิ่งชัน"}, {"no": "255", "license": "80-2-02554", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายสุนันต์ คงช่วย", "place": "โรงผลิตน้ำดื่มบ้านปลักปลา", "addr": "85 หมู่ 2 ต.ตลิ่งชัน"}, {"no": "269", "license": "80-2-00755", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายเลื่อน เหลื่อมแก้ว", "place": "กลุ่มชุมชนบ้านถ้ำหลอด", "addr": "186/10 หมู่ 9 ต.ตลิ่งชัน"}, {"no": "282", "license": "80-2-03155", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวผุสดี สว่างวงศ์", "place": "ศรีสุชาติวอเตอร์", "addr": "66/4 หมู่ 15 ต.ท่าขึ้น"}, {"no": "286", "license": "80-2-03655", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางวรางคณา อารยชาติ", "place": "ร้านท่าศาลาน้ำดื่ม", "addr": "276/10 หมู่ 1 ต.ท่าศาลา"}, {"no": "287", "license": "80-2-03755", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายสุกรี บัวทิพย์", "place": "ร้านแก้วทิพย์", "addr": "79/1 หมู่ 2 ต.ท่าขึ้น"}, {"no": "298", "license": "80-2-00456", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายน้อย หลีหลัง", "place": "น้ำดื่มมุตลัก", "addr": "11 หมู่ 1 ต.โมคลาน"}, {"no": "315", "license": "80-2-02956", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายกิตติพงศ์ ช่วยคง", "place": "น้ำดื่มต้นหอม", "addr": "129/16 หมู่ 6 ต.ดอนตะโก"}, {"no": "316", "license": "80-2-03356", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "บริษัท แฮ็ปปี้ดริ้ง  จำกัด", "place": "บริษัท แฮ็ปปี้ดริ้ง จำกัด", "addr": "207/144 หมู่ 3 ต.ท่าศาลา"}, {"no": "317", "license": "80-2-03456", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายอำนวย แตงขาว", "place": "น้ำดื่มชุมชนบ้านในหัน", "addr": "51 หมู่ 4 ต.ไทยบุรี"}, {"no": "336", "license": "80-2-01657", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางชวนพิศ  เพ็งจันทร์", "place": "น้ำดื่ม กรีนไดมอนด์", "addr": "145/3 หมู่ 5 ต.ท่าขึ้น"}, {"no": "364", "license": "80-2-05357", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายสุธน วรเวทย์ชลิต", "place": "ธนา น้ำดื่ม", "addr": "78/2 หมู่ 7 ต.ไทยบุรี"}, {"no": "370", "license": "80-2-06157", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายณรงค์เดช  ชูชีวิต", "place": "เอ็นดีน้ำดื่ม", "addr": "105/1 หมู่ 1 ต.ท่าขึ้น"}, {"no": "420", "license": "80-2-02559", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "โรงเรียนท่าศาลาประสิทธิ์ศึกษา", "place": "โรงเรียนท่าศาลาประสิทธิ์ศึกษา", "addr": "155/35 หมู่ 3 ต.ท่าศาลา"}, {"no": "434", "license": "80-2-01060", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "กองทุนหมู่บ้าน บ้านยางด้วน", "place": "กองทุนหมู่บ้านบ้านยางด้วน", "addr": "126 หมู่ 7 ต.โพธิ์ทอง"}, {"no": "446", "license": "80-2-02660", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายวิทยา กะแหมเตบ", "place": "น้ำดื่ม นาเดีย", "addr": "224/3 หมู่ 15 ต.ท่าศาลา"}, {"no": "470", "license": "80-2-01061", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายชัย แสงห้วยไผ่", "place": "น้ำดื่มสุดารัตน์", "addr": "77/2 หมู่ 5 ต.ท่าขึ้น"}, {"no": "493", "license": "80-2-00762", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "บ้านโมคลาน", "place": "กองทุนหมู่บ้านบ้านโมคลาน", "addr": "28 หมู่ 11 ต.โมคลาน"}, {"no": "516", "license": "80-2-03462", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "โรงเรียน โมคลานประชาสรรค์", "place": "โรงเรียน โมคลานประชาสรรค์", "addr": "26 หมู่ 12 ต.โมคลาน"}, {"no": "645", "license": "80-2-01268", "type": "น้ำแข็ง", "name": "บริษัท เกร็ดแก้ว กรีน จำกัด", "place": "บริษัท เกร็ดแก้ว กรีน จำกัด สาขาท่าศาลา", "addr": "110/14 หมู่ 2 ต.ท่าศาลา"}], "สิชล": [{"no": "17", "license": "80-2-00537", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายวินิจ ทองสุก", "place": "น้ำดื่มวินิจ", "addr": "54 หมู่ 6 ต.ทุ่งปรัง"}, {"no": "21", "license": "80-2-00939", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางจิระวรรณ วัชรกาฬ", "place": "น้ำดื่มอุทัยทิพย์", "addr": "9 หมู่ 3 ต.ทุ่งปรัง"}, {"no": "53", "license": "80-2-01142", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวอรอุมา วิริยะพานิช", "place": "น้ำดื่มสร้อยฟ้า", "addr": "258/3 ซอยตารอด หมู่ 5 ต.สิชล"}, {"no": "79", "license": "80-2-01545", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายศรศักดิ์  วิชัยกุล", "place": "น้ำดื่มแฟมมิลี่", "addr": "119 หมู่ 7 ต.เสาเภา"}, {"no": "132", "license": "80-2-01748", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายธนภัทร สิทธิพูล", "place": "น้ำดื่มทีพี", "addr": "151 หมู่ 5 ต.ทุ่งปรัง"}, {"no": "134", "license": "80-2-02048", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายสิทธิ์ติวัช  แซ่เฮ่า", "place": "บุญมี-วอเตอร์", "addr": "60/5 หมู่ 1 ต.เสาเภา"}, {"no": "138", "license": "80-2-02748", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายอำพล ศิริสุข", "place": "อำพลน้ำดื่ม", "addr": "37 หมู่ 2 ต.เสาเภา"}, {"no": "144", "license": "80-2-00549", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสุภรณ์ องอาจ", "place": "กาญจน์ทิพย์", "addr": "26 หมู่ 16 ต.เสาเภา"}, {"no": "176", "license": "80-2-02650", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายสำราญ ช่วยแก้ว", "place": "เขาคาน้ำทิพย์", "addr": "107 หมู่ 11 ต.เสาเภา"}, {"no": "196", "license": "80-2-02751", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "ว่าที่ร้อยตรี ภิรมย์ เรืองฤทธิ์", "place": "น้ำดื่มไชยวฤทธิ์", "addr": "68 หมู่ 9 ต.ฉลอง"}, {"no": "208", "license": "80-2-01652", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายธนบัตร บริบูรณ์", "place": "น้ำดื่มเขาเกียรติธารรา", "addr": "66 หมู่ 3 ต.ทุ่งปรัง"}, {"no": "215", "license": "80-2-03252", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายกฤตกร  ทรัพย์เจริญ", "place": "น้ำดื่มสิชลธารา", "addr": "4/4 หมู่ 12 ต.สี่ขีด"}, {"no": "263", "license": "80-2-00155", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายอุดมพร สุวรรณ์", "place": "น้ำดื่มเทพราช", "addr": "99/1 หมู่ 8 ต.เทพราช"}, {"no": "271", "license": "80-2-01455", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายปฐมพร ควรเรือง", "place": "น้ำดื่ม เพชรน้ำอิง วอเตอร์", "addr": "11/7 หมู่ 5 ต.เปลี่ยน"}, {"no": "283", "license": "80-2-03255", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาววีณา โต๊ะสาน", "place": "น้ำดื่มบารอกัต", "addr": "426 หมู่ 5 ต.สิชล"}, {"no": "300", "license": "80-2-00856", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางจารุณี เจริญพักตร์", "place": "เอส.เอ็ม.แอล.หมู่ที่ 1", "addr": "212/6,211/18 หมู่ 1 ต.สิชล"}, {"no": "312", "license": "80-2-02656", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางปริชาติ ชนะคุ้ม", "place": "ปาริชาติ น้ำดื่ม", "addr": "31/1 หมู่ 2 ต.เทพราช"}, {"no": "324", "license": "80-2-04256", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายวัชราวุฒิ  ทองอนันต์", "place": "ตลาดเสาร์น้ำดื่ม", "addr": "1/2 หมู่ 6 ต.ทุ่งใส"}, {"no": "332", "license": "80-2-01057", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวปณชัย  เพ็งเรือง", "place": "ต้นเนียงธารา", "addr": "13 หมู่ 3 ต.เทพราช"}, {"no": "335", "license": "80-2-01557", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "สุคนธ์ทิพย์ สมจิตร", "place": "เพียวทิพย์", "addr": "37/3 หมู่ 7 ต.เปลี่ยน"}, {"no": "337", "license": "80-2-01757", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายวรุณ  ไชยฤกษ์", "place": "น้ำดื่ม พี แอนด์ พี", "addr": "45 หมู่ 5 ต.เสาเภา"}, {"no": "374", "license": "80-2-00458", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายธีระวัฒน์  ใจห้าว", "place": "บ้านเผียนน้ำดื่ม", "addr": "122 หมู่ 5 ต.เทพราช"}, {"no": "379", "license": "80-2-00958", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวอมลวรรณ  แทนกลาง", "place": "น้ำดื่มโชคชลกร", "addr": "95/1 หมู่ 5 ต.สิชล"}, {"no": "398", "license": "80-2-03558", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายอัยย์การ  นาคกลัด", "place": "บ่อทอง น้ำดื่ม", "addr": "12/1 หมู่ 6 ต.สิชล"}, {"no": "419", "license": "80-2-02459", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายวิรัตน์  สมเก่า", "place": "จันทร์ทิพย์ธารา", "addr": "51/1 หมู่ 6 ต.เทพราช"}, {"no": "441", "license": "80-2-02060", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายภูษิต  พฤกษารัตน์", "place": "น้ำดื่มตรานูรร์", "addr": "22/3 หมู่ 7 ต.ทุ่งปรัง"}, {"no": "445", "license": "80-2-02460", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายสมยศ  แก้วมณี", "place": "น้ำดื่ม ต้นน้ำ", "addr": "77 หมู่ 7 ต.เขาน้อย"}, {"no": "458", "license": "80-2-04460", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายสุวิทย์ ถนิมกาญจน์", "place": "ฉลองน้ำดื่ม", "addr": "14/2 หมู่ 6 ต.ฉลอง"}, {"no": "500", "license": "80-2-01662", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท / น้ำแข็ง", "name": "ห้างหุ้นส่วนจำกัด รัตนราช(2541)", "place": "ห้างหุ้นส่วนจำกัด รัตนราช(2541)", "addr": "291/29 หมู่ 1 ต.สิชล"}, {"no": "509", "license": "80-2-02662", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวสุภารัตน์  สมปอง", "place": "ชลาทิพย์ น้ำดื่ม", "addr": "261/18 หมู่ 5 ต.สิชล"}, {"no": "554", "license": "80-2-01964", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางเติมสุข  โจมฤทธิ์", "place": "น้ำดื่ม บ้านสวนลุงมุข", "addr": "137/5 หมู่ 8 ต.ฉลอง"}, {"no": "588", "license": "80-2-01366", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายธนภัทร  ประจันพล", "place": "โรงน้ำดื่ม ซีวอเตอร์", "addr": "94/2 หมู่ 8 ต.ทุ่งใส"}, {"no": "593", "license": "80-2-01866", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายพัฒนะ  ศิลปรัศมี", "place": "รัศมี น้ำดื่ม", "addr": "147/45 หมู่ 1 ต.สิชล"}, {"no": "616", "license": "80-2-01367", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายวีระชัย  บุญนิสัย", "place": "คลังน้ำมาทีต้า", "addr": "88/8 หมู่ 13 ต.ทุ่งปรัง"}, {"no": "626", "license": "80-2-02367", "type": "น้ำแข็ง", "name": "บริษัท เปเป้น้ำแข็งหลอดสิชล จำกัด", "place": "บริษัท เปเป้น้ำแข็งหลอดสิชล จำกัด", "addr": "139/1 หมู่ 7 ต.ทุ่งใส"}], "พรหมคีรี": [{"no": "24", "license": "80-2-01739", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายสุรีย์  ปณารัตน์", "place": "ร้านหงส์ทิพย์", "addr": "49/2 หมู่ 5 ต.ทอนหงส์"}, {"no": "109", "license": "80-2-01047", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายพินิตย์  จินกระวี", "place": "ทานตะวันน้ำดื่ม", "addr": "127/1 หมู่ 6 ต.พรหมโลก"}, {"no": "266", "license": "80-2-00455", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "ห้างหุ้นส่วนจำกัด น้ำดื่ม ดีดี เฟรช", "place": "หจก. น้ำดื่ม ดีดี เฟรช", "addr": "107/6 หมู่ 4 ต.พรหมโลก"}, {"no": "274", "license": "80-2-01955", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายหัสดิชัย กลิ่นมาลี", "place": "บ้านชฎา เรือนปฏัก", "addr": "102/4 หมู่ 5 ต.บ้านเกาะ"}, {"no": "299", "license": "80-2-00656", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายวัชรากร บุญคล่อง", "place": "น้ำดื่ม ชบา", "addr": "70/18 หมู่ 9 ต.ทอนหงส์"}, {"no": "333", "license": "80-2-01157", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "บริษัท ส.ทรัพย์ทวี จำกัด", "place": "บริษัท ส.ทรัพย์ทวี จำกัด", "addr": "98/9 หมู่ 4 ต.พรหมโลก"}, {"no": "373", "license": "80-2-00358", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายพันธ์ยศ  เดชสุข", "place": "น้ำดื่มหงส์ทอง", "addr": "186 หมู่ 2 ต.ทอนหงส์"}, {"no": "395", "license": "80-2-03258", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางเสาวลักษณ์  โพธิ์ทอง", "place": "น้ำดื่มบิ๊ก", "addr": "58/2 หมู่ 3 ต.อินคีรี"}, {"no": "459", "license": "80-2-04660", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "โรงเรียนพรหมคีรีพิทยาคม", "place": "โรงผลิตน้ำดื่มโรงเรียนพรหมคีรีพิทยาคม", "addr": "3 หมู่ 4 ต.ทอนหงส์"}, {"no": "460", "license": "80-2-04760", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสุกัญญา  จบสองชั้น", "place": "กรีนเวย์", "addr": "113/4 หมู่ 6 ต.พรหมโลก"}, {"no": "463", "license": "80-2-05060", "type": "น้ำแร่ธรรมชาติ", "name": "ห้างหุ้นส่วนจำกัด กรีนเนเร่  วอเตอร์ดริ้ง", "place": "ห้างหุ้นส่วนจำกัด กรีนเนเร่ วอเตอร์ดริ้ง", "addr": "73/2 หมู่ 5 ต.ทอนหงส์"}, {"no": "471", "license": "80-2-01261", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายวิวัฒน์  อิวิโส", "place": "สิวลีน้ำดื่ม", "addr": "12 หมู่ 2 ต.ทอนหงส์"}, {"no": "578", "license": "80-2-00266", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายณรงค์ศักดิ์  บางเมือง", "place": "น้ำดื่มวารินทร์", "addr": "1 หมู่ 6 ต.พรหมโลก"}, {"no": "628", "license": "80-2-02567", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายศรีรัตน์  รัตนะ", "place": "โรงผลิตน้ำดื่มตราภูเตง", "addr": "64/20 หมู่ 2 ต.ทอนหงส์"}], "พระพรหม": [{"no": "26", "license": "80-2-02339", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายพรเทพ  วระวาท", "place": "น้ำดื่มพระพรหม", "addr": "47/2 หมู่ 5 ต.นาพรุ"}, {"no": "131", "license": "80-2-01648", "type": "น้ำแข็ง", "name": "บริษัท เตยหอมอุตสาหกรรม จำกัด", "place": "บริษัท เตยหอมอุตสาหกรรม จำกัด (สาขาพระพรหม)", "addr": "169/1 หมู่ 13 ต.ช้างซ้าย"}, {"no": "204", "license": "80-2-00852", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายโชติ ทองเสภี", "place": "กลุ่มออมทรัพย์ SML(บ้านพระเพรง)", "addr": "140/3 หมู่ 3 ต.นาสาร"}, {"no": "218", "license": "80-2-00253", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวธัญญารัตน์ สงวนพร้อม", "place": "น้ำดื่มพระพรหม", "addr": "18/1 หมู่ 4 ต.นาพรุ"}, {"no": "223", "license": "80-2-00953", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายกฤตธี อินทองคำ", "place": "พระพรหมวอเตอร์", "addr": "129/40 ถนนบ้านพระเพรง-บ้านขุนทะเล หมู่ 3 ต.นาสาร"}, {"no": "229", "license": "80-2-01753", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางจิราภรณ์ รำพึงนิตย์", "place": "น้ำดื่มมังกร", "addr": "65 หมู่ 9 ต.ช้างซ้าย"}, {"no": "311", "license": "80-2-02556", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายสุชาติ  รำพึงนิตย์", "place": "น้ำดื่มตราแสตมป์", "addr": "92/1 หมู่ 9 ต.ช้างซ้าย"}, {"no": "365", "license": "80-2-05457", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายสุภาพ  ศิลปวาที", "place": "โรงเรียนเตรียมอุดมศึกษาภาคใต้", "addr": "1 หมู่ 6 ต.นาพรุ"}, {"no": "393", "license": "80-2-03058", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวอินทิรา  นงค์เยาว์", "place": "น้ำดื่มไอลิน", "addr": "33/1 หมู่ 5 ต.นาพรุ"}, {"no": "429", "license": "80-2-00260", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายริษฎา  คงจรูญ", "place": "วีพี ไบร์ท", "addr": "122/86 หมู่ 6 ต.นาพรุ"}, {"no": "448", "license": "80-2-03160", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางฑิตาวรรณ  คชินทร์โรจน์", "place": "แอ๊ปเปิ้ล น้ำดื่ม", "addr": "88/4 หมู่ 1 ต.นาพรุ"}, {"no": "453", "license": "80-2-03660", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางโสภา  คงสำคัญ", "place": "น้ำดื่ม ตะวัน", "addr": "83 หมู่ 5 ต.นาพรุ"}, {"no": "467", "license": "80-2-00561", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "ห้างหุ้นส่วนจำกัด วิงค์ อินเตอร์ไพรส์", "place": "ห้างหุ้นส่วนจำกัด วิงค์ อินเตอร์ไพรส์", "addr": "149/3 หมู่ 1 ต.นาสาร"}, {"no": "482", "license": "80-2-02461", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "บ้านทุ่งยวนยั่งยืน", "place": "กองทุนหมู่บ้าน บ้านทุ่งยวนยั่งยืน", "addr": "130/6 หมู่ 11 ต.ช้างซ้าย"}, {"no": "504", "license": "80-2-02062", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายสานนท์  สีวิโสตร", "place": "โรงน้ำนครนนท์", "addr": "61 หมู่ 8 ต.ท้ายสำเภา"}, {"no": "518", "license": "80-2-00263", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวรุจยา  ปฐมกุลวงศ์", "place": "น้ำดื่ม ธีร์-ปิง", "addr": "47/1 หมู่ 3 ต.ช้างซ้าย"}, {"no": "549", "license": "80-2-01364", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวปิยเนตร  รอดเกลี้ยง", "place": "น้ำดื่มบินหลา", "addr": "137/10 หมู่ 3 ต.ช้างซ้าย"}, {"no": "604", "license": "80-2-02966", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายสมชาย  ปรีชาการ", "place": "ธาม วอเตอร์", "addr": "55/1 หมู่ 9 ต.ท้ายสำเภา"}], "จุฬาภรณ์": [{"no": "31", "license": "80-2-01540", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายวิธาน  ปราบแก้ว", "place": "จุฬาพร้อมภัณฑ์", "addr": "92/1 หมู่ 4 ต.ทุ่งโพธิ์"}, {"no": "96", "license": "80-2-03546", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายสำเริง สิทธิศักดิ์", "place": "กลุ่มเกษตรกรทฤษฎีใหม่", "addr": "163/2 ต.บ้านควนมุด"}, {"no": "216", "license": "80-2-03352", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางละไม กุลโพธิ์", "place": "วิสาหกิจชุมชนบ้านอายเลา", "addr": "35/3 หมู่ 5 ต.ทุ่งโพธิ์"}, {"no": "225", "license": "80-2-01253", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายคีรี ณัฐคุณานนท์", "place": "น้ำดื่มคีรี", "addr": "89/1 หมู่ 1 ต.นาหมอบุญ"}, {"no": "234", "license": "80-2-02253", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "ว่าที่ร้อยตรี วีระ  นาคปาน", "place": "น้ำดื่มเพชรวิบูลย์", "addr": "159 หมู่ 5 ต.สามตำบล"}, {"no": "258", "license": "80-2-02854", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวดวงฤดี ชูเกิด", "place": "น้ำดื่มดวงฤดี", "addr": "15/3 หมู่ 5 ต.นาหมอบุญ"}, {"no": "272", "license": "80-2-01555", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายสำราญ มณีเศวต", "place": "โรงน้ำดื่มช้างเผือก", "addr": "23/5 หมู่ 3 ต.นาหมอบุญ"}, {"no": "368", "license": "80-2-05957", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "คงษณ หนูเกลี้ยง", "place": "โรงน้ำดื่มต้นปาล์ม", "addr": "53/5 หมู่ 1 ต.ทุ่งโพธิ์"}, {"no": "452", "license": "80-2-03560", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายประเสริฐ  คงทอง", "place": "น้ำดื่มเภาทอง", "addr": "92/4 หมู่ 2 ต.ทุ่งโพธิ์"}, {"no": "503", "license": "80-2-01962", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "บ้านปลายนา", "place": "กองทุนหมู่บ้านบ้านปลายนา", "addr": "98/2 หมู่ 5 ต.สามตำบล"}, {"no": "534", "license": "80-2-02563", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสุกาลดา  สุวรรณเรืองศรี", "place": "โรงน้ำดื่มวังพญา", "addr": "4/1 หมู่ 3 ต.ทุ่งโพธิ์"}, {"no": "598", "license": "80-2-02366", "type": "น้ำแข็ง", "name": "บริษัท โรงน้ำแข็งทรัพย์สมบัติ จำกัด", "place": "บริษัท โรงน้ำแข็งทรัพย์สมบัติ จำกัด", "addr": "121 ถนนเพชรเกษม หมู่ 3 ต.ทุ่งโพธิ์"}], "ร่อนพิบูลย์": [{"no": "43", "license": "80-2-01141", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายศุภวิทย์ เบ็ญคาร", "place": "น้ำดื่มดาวเดือน", "addr": "593/1 หมู่ 3 ต.หินตก"}, {"no": "66", "license": "80-2-00644", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายเลียบ พรหมรักษ์", "place": "น้ำดื่มโอ.ที.", "addr": "83 หมู่ 4 ต.ควนพัง"}, {"no": "71", "license": "80-2-00545", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวอาทิยา แซ่อึ่ง", "place": "น้ำดื่มเทวรักษ์", "addr": "190/5 หมู่ 3 ต.ร่อนพิบูลย์"}, {"no": "119", "license": "80-2-04047", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวศิราณีย์ หนูทอง", "place": "น้ำดื่มคณิศร", "addr": "71 หมู่ 4 ต.ควนเกย"}, {"no": "126", "license": "80-2-00648", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายสุเมต ดำทอง", "place": "น้ำดื่มออมสิน", "addr": "383/3 หมู่ 3 ต.ควนพัง"}, {"no": "192", "license": "80-2-02251", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางอารีย์ ธานีรัตน์", "place": "วิสาหกิจชุมชนน้ำดื่มภักดี", "addr": "230 หมู่ 3 ต.ควนชุม"}, {"no": "209", "license": "80-2-02052", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายสนั่น บุญเมือง", "place": "กลุ่มน้ำดื่ม SML ม.2 ต.ควนเกย", "addr": "368 หมู่ 2 ต.ควนเกย"}, {"no": "250", "license": "80-2-01854", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายบัญญัติ สุขศรี", "place": "น้ำดื่มลูกหมี", "addr": "124/4 หมู่ 2 ต.หินตก"}, {"no": "270", "license": "80-2-01055", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายสุริยะ วาทีตรง", "place": "น้ำดื่มสุริยะ", "addr": "10/1 หมู่ 5 ต.ควนพัง"}, {"no": "290", "license": "80-2-04655", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายสมเกียรติ  อ่อนสุขแก้ว", "place": "น้ำดื่มคลีน", "addr": "44/7 หมู่ 8 ต.หินตก"}, {"no": "323", "license": "80-2-04156", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวพรทิพย์  ชุมทอง", "place": "โรงน้ำดื่มพรทิพย์", "addr": "14/5 หมู่ 4 ต.ควนชุม"}, {"no": "325", "license": "80-2-04456", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางวรรณี  ขวัญเพชร", "place": "น้ำดื่มขวัญเพชร", "addr": "171/2 หมู่ 14 ต.ร่อนพิบูลย์"}, {"no": "330", "license": "80-2-00857", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวสมานลักษณ์  หนูเขียว", "place": "พรธาราน้ำดื่ม", "addr": "134/6 หมู่ 2 ต.หินตก"}, {"no": "346", "license": "80-2-02957", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสุคนธ์ วินเกตุ", "place": "สุคนธ์ทิพย์", "addr": "392/1 หมู่ 8 ต.ควนพัง"}, {"no": "354", "license": "80-2-04157", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายอุทัย  เพชรเรือง", "place": "โรงเรียนวัดสุวรรณโฆษิต", "addr": "00 หมู่ 1 ต.ควนพัง"}, {"no": "355", "license": "80-2-04257", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางกันยา  เมืองแก้ว", "place": "น้ำดื่ม นิว วอเตอร์", "addr": "164/4 หมู่ 8 ต.ร่อนพิบูลย์"}, {"no": "409", "license": "80-2-00859", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายณรงค์ธรรม  สุวรรณปาน", "place": "น้ำดื่มดอกอินทนิล", "addr": "758 หมู่ 13 ต.ร่อนพิบูลย์"}, {"no": "432", "license": "80-2-00860", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายณัชศมนต์  คงแก้ว", "place": "วอเตอร์เซ็นเตอร์&การ์เด้น", "addr": "151/1 หมู่ 8 ต.ร่อนพิบูลย์"}, {"no": "433", "license": "80-2-00960", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวมณทิรา จู้ฉิ้ม", "place": "นำนคร", "addr": "96 หมู่ 4 ต.ร่อนพิบูลย์"}, {"no": "497", "license": "80-2-01262", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวสุกัญญา โยธาบริบาล", "place": "เค ซี", "addr": "15/6 หมู่ 5 ต.ร่อนพิบูลย์"}, {"no": "546", "license": "80-2-00964", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาววิชิดา  ปลอดเอียด", "place": "ร้านคีริน วอเตอร์", "addr": "2/2 ถนนคีรีรัตนาราม หมู่ 6 ต.หินตก"}, {"no": "552", "license": "80-2-01764", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางบุญสิริ  เฉลิมเกียรติ", "place": "บุญไอซ์", "addr": "90/1 หมู่ 6 ต.ร่อนพิบูลย์"}, {"no": "600", "license": "80-2-02566", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวเปมิกา  นามเจริญ", "place": "น้ำดื่มสุขคง", "addr": "302/3 หมู่ 7 ต.เสาธง"}, {"no": "640", "license": "80-2-00668", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายฐิติพันธ์  หนูเสือ", "place": "น้ำดื่มธารทิพย์", "addr": "93/1 หมู่ 4 ต.ร่อนพิบูลย์"}], "นบพิตำ": [{"no": "52", "license": "80-2-01042", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายสุวรรณ สุทิน", "place": "สุวรรณการเกษตร", "addr": "226/1 หมู่ 1 ต.นบพิตำ"}, {"no": "82", "license": "80-2-00446", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางพัลลภา ชื่นชม", "place": "น้ำดื่มกรุงชิง", "addr": "26/6 หมู่ 2 ต.กรุงชิง"}, {"no": "108", "license": "80-2-00847", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายบรรลือ แก้วนุ่น", "place": "สุบินน้ำดื่ม(น้ำดื่มบิลลี่)", "addr": "19/1 หมู่ 1 ต.กรุงชิง"}, {"no": "149", "license": "80-2-01349", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายบุญเลิศ รัตนวงศ์", "place": "น้ำดื่มบ้านห้วยพาน", "addr": "3/1 หมู่ 2 ต.กรุงชิง"}, {"no": "158", "license": "80-2-00250", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายสมชาย จุ้ยสุวรรณ์", "place": "น้ำดื่มกรุงนาง", "addr": "107 หมู่ 5 ต.กรุงชิง"}, {"no": "178", "license": "80-2-02950", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางทัศนีย์ มีปาน", "place": "ชุมชนบ้านไสรักษ์", "addr": "112/1 หมู่ 8 ต.กะหรอ"}, {"no": "214", "license": "80-2-03152", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายคำรณ เชาวลิต", "place": "กลุ่มผลิตน้ำดื่มบ้านทุ่งใน", "addr": "45 หมู่ 8 ต.นบพิตำ"}, {"no": "318", "license": "80-2-03556", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางนวธร  เรืองสูง", "place": "น้ำดื่มมาลี", "addr": "187 หมู่ 6 ต.กรุงชิง"}, {"no": "331", "license": "80-2-00957", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายณัฐพงศ์  เกตุเผือก", "place": "สดชื่น น้ำดื่ม", "addr": "19/2 หมู่ 7 ต.นบพิตำ"}, {"no": "485", "license": "80-2-02761", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวศลิษา อินณรงค์", "place": "น้ำดื่มบ้านสวน", "addr": "283 หมู่ 6 ต.นบพิตำ"}, {"no": "539", "license": "80-2-03063", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "บริษัท โชค เติมสุข จำกัด", "place": "บริษัท โชค เติมสุข จำกัด", "addr": "111/7-8 หมู่ 6 ต.นบพิตำ"}, {"no": "592", "license": "80-2-01766", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวจริยา  หยูทอง", "place": "โรงน้ำดื่ม เอสที บลูโอเชี่ยน", "addr": "86/2 หมู่ 3 ต.นาเหรง"}], "เชียรใหญ่": [{"no": "57", "license": "80-2-00443", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายสมชาย  คงนวล", "place": "ส.น้ำดื่ม", "addr": "384 หมู่ 3 ต.เชียรใหญ่"}, {"no": "273", "license": "80-2-01655", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายวรรณทิพย์ ยกล้วน", "place": "น้ำดื่มวรรณาทิพย์", "addr": "260 หมู่ 4 ต.เขาพระบาท"}, {"no": "293", "license": "80-2-05255", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวนิตยา  หนูสุข", "place": "น้ำดื่ม กรีนเมท", "addr": "478 หมู่ 6 ต.การะเกด"}, {"no": "307", "license": "80-2-01956", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายธนพนธ์ จินโน", "place": "น้ำดื่มเพชรศรทอง", "addr": "44/4 หมู่ 7 ต.แม่เจ้าอยู่หัว"}, {"no": "443", "license": "80-2-02260", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายวิชาญ  มณีอุปถัมภ์", "place": "ซี ซิน น้ำดื่ม", "addr": "454 หมู่ 7 ต.แม่เจ้าอยู่หัว"}, {"no": "494", "license": "80-2-00962", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "พัชรไชย  พันธุ์ทอง", "place": "น้ำดื่ม เชียรใหญ่", "addr": "43 ถนนไชยวานิช หมู่ 3 ต.เชียรใหญ่"}, {"no": "501", "license": "80-2-01762", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท / อาหารทั่วไป ได้แก่ เครื่องปรุงรส ที่ผ่านการตรวจประเมิน / อาหารทั่วไป ได้แก่ สัตว์และผลิตภัณฑ์ ที่ผ่านการตรวจประเมิน", "name": "บริษัท เหมย - หลิน ฟู๊ด จำกัด", "place": "บริษัท เหมย-หลิน ฟู๊ด จำกัด", "addr": "187 หมู่ 8 ต.แม่เจ้าอยู่หัว"}, {"no": "510", "license": "80-2-02762", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางกิจฐาพร  สุขเกื้อ", "place": "สิริภัทรพาณิชย์", "addr": "122 หมู่ 9 ต.เชียรใหญ่"}], "ปากพนัง": [{"no": "68", "license": "80-2-01544", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายคมกฤช ช่วยจันทร์", "place": "น้ำดื่มจอมทอง", "addr": "76/8 ซอยประชาวัฒนา1 ถนนประชาวัฒนา ต.ปากพนัง"}, {"no": "102", "license": "80-2-04446", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายเฉลิมพล  หวานแก้ว", "place": "เทียนน่ำ", "addr": "167/5 ถนนพานิชสัมพันธ์ ต.ปากพนัง"}, {"no": "113", "license": "80-2-01947", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางเพ็ญศรี  ศรีสุวรรณกาฬ", "place": "น้ำดื่มกิ่งไผ่", "addr": "69/3 หมู่ 4 ต.บางพระ"}, {"no": "220", "license": "80-2-00453", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายจิรพงษ์ พัฒน์ทอง", "place": "พี  เค วอเตอร์ แอนด์ ไอซ์", "addr": "19 หมู่ 9 ต.คลองกระบือ"}, {"no": "221", "license": "80-2-00553", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวรุ่งรัตน์ แกวท่าพญา", "place": "น้ำดื่มรุ่งทิพย์", "addr": "41/1 หมู่ 4 ต.ปากแพรก"}, {"no": "249", "license": "80-2-01754", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวยอแสง รักบางบูรณ์", "place": "ส.รักษ์บางบูรณ์", "addr": "15 หมู่ 10 ต.ป่าระกำ"}, {"no": "262", "license": "80-2-03454", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวสารภี ครุฑจ้อน", "place": "ภูเลเบพเวอร์เรจ", "addr": "340/1 หมู่ 5 ต.ปากพนังฝั่งตะวันออก"}, {"no": "347", "license": "80-2-03057", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายนพปฎล  จันทพันธ์", "place": "สตาร์วอเตอร์", "addr": "60/1 หมู่ 3 ต.ป่าระกำ"}, {"no": "376", "license": "80-2-00658", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางภารัศมิ์อร  พงศ์ชัยกรณ์", "place": "น้ำดื่มเมืองนัง", "addr": "126 หมู่ 1 ต.บางพระ"}, {"no": "405", "license": "80-2-04458", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายดอนศักดิ์  จิรักษา", "place": "น้ำดื่มไทยรักษา", "addr": "18 หมู่ 7 ต.คลองกระบือ"}, {"no": "413", "license": "80-2-01459", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายวรรณโชติ  แป้นเกิด", "place": "น้ำดื่มเซฟ", "addr": "151 หมู่ 6 ต.ท่าพยา"}, {"no": "440", "license": "80-2-01860", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายจิตร์เจริญ  จันทร", "place": "น้ำดื่มพอลล่า", "addr": "301 หมู่ 2 ต.บางพระ"}, {"no": "515", "license": "80-2-03362", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวอังคณา จันทวงค์", "place": "น้ำดื่มแรบบิท", "addr": "213/8 หมู่ 1 ต.บางพระ"}, {"no": "560", "license": "80-2-00565", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวกรรณิการ์  พันธ์ชู", "place": "น้ำดื่มนที", "addr": "63/4 หมู่ 5 ต.หูล่อง"}, {"no": "591", "license": "80-2-01666", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายกฤษณะ  นาคแก้ว", "place": "น้ำดื่มอ่าวไทย", "addr": "207 หมู่ 5 ต.เกาะทวด"}, {"no": "646", "license": "80-2-01368", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "บริษัท สิริ99 เอ็นเตอร์ไพรส์(ไทยแลนด์) จำกัด", "place": "บริษัท สิริ99 เอ็นเตอร์ไพรส์(ไทยแลนด์) จำกัด", "addr": "99/5 ถนนศรีสมบูรณ์ ต.ปากพนัง"}, {"no": "649", "license": "80-2-01668", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายองอาจ  ทองมี", "place": "ป.รุ่งเรือง", "addr": "49 หมู่ 7 ต.ป่าระกำ"}], "ทุ่งใหญ่": [{"no": "77", "license": "80-2-01345", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายชาญดำรง  ณ นคร", "place": "คณะเกษตรศาสตร์นครศรีธรรมราช", "addr": "133 หมู่ 5 ต.ทุ่งใหญ่"}, {"no": "104", "license": "80-2-00347", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายสุรินทร์ชัย  ฟองแก้ว", "place": "ทุ่งใหญ่น้ำดื่ม", "addr": "279 หมู่ 11 ต.ท่ายาง"}, {"no": "197", "license": "80-2-02851", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายทนงศักดิ์ แสงศรี", "place": "โนราห์น้ำดื่ม", "addr": "256/1 หมู่ 5 ต.ปริก"}, {"no": "199", "license": "80-2-03251", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวเสาวภา สุขาพันธ์", "place": "น้ำดื่มซีอิงค์", "addr": "31/1 หมู่ 4 ต.ทุ่งสัง"}, {"no": "206", "license": "80-2-01252", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายวิชิตร แช่มศิริวัฒน์", "place": "เทศบาลตำบลท่ายาง", "addr": "91 ถนนพระแสง หมู่ 2 ต.ท่ายาง"}, {"no": "259", "license": "80-2-02954", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายวีระพล  หงษ์ทอง", "place": "โรงน้ำวีรภัทรา", "addr": "245/2 หมู่ 7 ต.ปริก"}, {"no": "267", "license": "80-2-00555", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายมณเฑียร นราอาจ", "place": "น้ำดื่มนราทอง", "addr": "2/3 ซอยบ้านนายช่วยอุทิศ หมู่ 2 ต.ท่ายาง"}, {"no": "297", "license": "80-2-00356", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางทิพยา อินทรักษ์", "place": "โรงน้ำดื่ม พี & พี วอเตอร์", "addr": "141 ซอย หมู่ 4 ต.ทุ่งสัง"}, {"no": "328", "license": "80-2-00457", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวณาตยา  ณ ศรีสุข", "place": "Lek O One", "addr": "212/6 ถนนหลักช้าง หมู่ 2 ต.ท่ายาง"}, {"no": "359", "license": "80-2-04857", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายสุวรรณ สุขใส", "place": "สุวรรณ น้ำดื่ม", "addr": "32/1 หมู่ 2 ต.ท่ายาง"}, {"no": "363", "license": "80-2-05257", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "สุพรชัย  ใจสว่าง", "place": "ส.ใจสว่างพาณิชย์", "addr": "192/3 หมู่ 8 ต.บางรูป"}, {"no": "442", "license": "80-2-02160", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท / น้ำแข็ง", "name": "ห้างหุ้นส่วนจำกัด น้ำแข็งภูเทพ", "place": "ห้างหุ้นส่วนจำกัด น้ำแข็งภูเทพ", "addr": "1/19 หมู่ 6 ต.ท่ายาง"}, {"no": "475", "license": "80-2-01761", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายสมปอง  ศรีเทพ", "place": "น้ำดื่มทวีสงค์", "addr": "86/4 หมู่ 3 ต.บางรูป"}, {"no": "559", "license": "80-2-00465", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวแสงเดือน  ปิ่นทอง", "place": "โรงน้ำดื่มมั่งมี", "addr": "193/1 หมู่ 8 ต.ทุ่งใหญ่"}, {"no": "562", "license": "80-2-00865", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายวัชรินทร์  เทพยา", "place": "น้ำดื่มอ้อยทิพย์", "addr": "182/4 หมู่ 2 ต.ทุ่งใหญ่"}, {"no": "619", "license": "80-2-01667", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางประจวบ  บัวแดงดี", "place": "น้ำดื่มพันวา", "addr": "648/5 หมู่ 2 ต.ท่ายาง"}], "พิปูน": [{"no": "86", "license": "80-2-01546", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายวิบูลย์ พงสัมพันธ์", "place": "น้ำดื่มเพลินทิพย์", "addr": "228/104 หมู่ 22 ต.เขาพระ"}, {"no": "100", "license": "80-2-04246", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางบุปผา  โพธิ์ชาธาร", "place": "น้ำดื่มตำบลกะทูน", "addr": "403 หมู่ 8 ต.กะทูน"}, {"no": "278", "license": "80-2-02655", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายมนตร์มนัส  สังข์เมฆ", "place": "น้ำดื่มนกยูง", "addr": "160 หมู่ 3 ต.กะทูน"}, {"no": "631", "license": "80-2-02967", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางประภัสสร  ณะคำ", "place": "น้ำดื่มเอเอ็กซ์", "addr": "307 หมู่ 7 ต.เขาพระ"}], "ช้างกลาง": [{"no": "91", "license": "80-2-02746", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายบรรจบ จันทร์เมือง", "place": "น้ำดื่มบ่อแก้ว", "addr": "87 หมู่ 5 ต.ช้างกลาง"}, {"no": "256", "license": "80-2-02654", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายพยัตพงศ์ พังแพร่", "place": "น้ำดื่มทิพย์", "addr": "299 ถนนนคร-จันดี หมู่ 2 ต.ช้างกลาง"}, {"no": "390", "license": "80-2-02458", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "อุดม  เกิดทรัพย์", "place": "น้ำดื่มอุดมสุข", "addr": "272 หมู่ 5 ต.หลักช้าง"}, {"no": "529", "license": "80-2-02063", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายรังสี  ตราชู", "place": "น้ำดื่ม 2 พี่น้อง", "addr": "87 หมู่ 2 ต.ช้างกลาง"}, {"no": "548", "license": "80-2-01264", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวชัญญา  จิรเขมรัชต์", "place": "น้ำดื่มมะลิ", "addr": "191/4 หมู่ 1 ต.หลักช้าง"}, {"no": "564", "license": "80-2-01065", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "บริษัท ช้างกลางน้ำดื่ม จำกัด", "place": "บริษัท ช้างกลางน้ำดื่ม จำกัด", "addr": "435,567 หมู่ 1 ต.ช้างกลาง"}, {"no": "624", "license": "80-2-02167", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวชญานิษฐ์  สุทธิ", "place": "น้ำดื่มวีอาร์", "addr": "91/3 หมู่ 7 ต.หลักช้าง"}], "นาบอน": [{"no": "116", "license": "80-2-02347", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายสมมุ่ง ศิลปวิสุทธิ์", "place": "น้ำดื่มชุมชนตำบลแก้วแสน", "addr": "33 หมู่ 6 ต.แก้วแสน"}, {"no": "124", "license": "80-2-00448", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท / น้ำแข็ง", "name": "บริษัท ดวงดาวน้ำแข็งหลอด จำกัด", "place": "บริษัท ดวงดาวน้ำแข็งหลอด จำกัด", "addr": "299 หมู่ 9 ต.ทุ่งสง"}, {"no": "153", "license": "80-2-02349", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายจำลอง  อำนวย", "place": "น้ำดื่มธารทอง", "addr": "69 หมู่ 2 ต.แก้วแสน"}, {"no": "284", "license": "80-2-03355", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายเชาวลิต รอดเกลี้ยง", "place": "น้ำดื่มใบเฟิร์น", "addr": "66/3 หมู่ 1 ต.แก้วแสน"}, {"no": "375", "license": "80-2-00558", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายอธิปัตย์ พัฒนเจริญ", "place": "ภัทร พัฒนเจริญ", "addr": "26/2 หมู่ 1 ต.ทุ่งสง"}, {"no": "457", "license": "80-2-04360", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายถาวร  บุญหาว", "place": "น้ำดื่มใบบัว", "addr": "141/1 หมู่ 2 ต.แก้วแสน"}, {"no": "522", "license": "80-2-01063", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวบุศรินทร์  บุญกุศล", "place": "น้ำดื่มเวนิส", "addr": "132 หมู่ 5 ต.ทุ่งสง"}, {"no": "551", "license": "80-2-01664", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวนฤมล  ชะนะดี", "place": "น้ำดื่มธนทรัพย์", "addr": "66/3 หมู่ 2 ต.ทุ่งสง"}, {"no": "577", "license": "80-2-00166", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "บริษัท ไทย อินเตอร์ กรุ๊ป (2020) จำกัด", "place": "บริษัท ไทย อินเตอร์ กรุ๊ป (2020) จำกัด สาขา 1", "addr": "11/5 หมู่ 9 ต.แก้วแสน"}, {"no": "589", "license": "80-2-01466", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสุริษา  ทองกระจ่าง", "place": "โรงน้ำดื่ม ณรภัทร", "addr": "129 หมู่ 10 ต.ทุ่งสง"}], "ถ้ำพรรณรา": [{"no": "117", "license": "80-2-02747", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายกฤษฎา ระวัง", "place": "น้ำดื่มเพชรดุสิต", "addr": "253 หมู่ 1 ต.ดุสิต"}, {"no": "127", "license": "80-2-00948", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "บริษัท นารวมอุตสาหกรรม จำกัด", "place": "บริษัท นารวมอุตสาหกรรม จำกัด", "addr": "77 หมู่ 8 ต.คลองเส"}, {"no": "202", "license": "80-2-00652", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายวิยศศักดิ์ พลพิชัย", "place": "น้ำดื่มเสาวลักษณ์", "addr": "83 หมู่ 8 ต.ถ้ำพรรณรา"}, {"no": "620", "license": "80-2-01767", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวจุลภาภรณ์  ยอดศิริ", "place": "น้ำดื่ม ออมตังค์", "addr": "95 หมู่ 9 ต.ถ้ำพรรณรา"}], "บางขัน": [{"no": "123", "license": "80-2-00348", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายวีรพงษ์ อิ้ววังโส", "place": "น้ำดื่มฟ้าใส", "addr": "36 หมู่ 14 ต.บ้านลำนาว"}, {"no": "177", "license": "80-2-02750", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายมงคล ชูกรณ์", "place": "น้ำดื่มชุมชนบ้านปากแพรก", "addr": "72/1 หมู่ 1 ต.บางขัน"}, {"no": "179", "license": "80-2-03050", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายอุดม มีบัว", "place": "น้ำดื่มอยู่ดีมีสุข ชุมชนบ้านไสฝ้าย", "addr": "58 หมู่ 12 ต.วังหิน"}, {"no": "391", "license": "80-2-02558", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "อรษา  แก้วเก้า", "place": "สีสัน น้ำดื่ม", "addr": "105 หมู่ 8 ต.บ้านนิคม"}, {"no": "410", "license": "80-2-00959", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "ปราณี  คำสีสุข", "place": "คีฑาภัทร", "addr": "218 หมู่ 11 ต.วังหิน"}, {"no": "449", "license": "80-2-03260", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสุณี  สมไทย", "place": "น้ำดื่มน้องเอก", "addr": "311 หมู่ 1 ต.วังหิน"}, {"no": "498", "license": "80-2-01362", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางวรรณทิพย์  ธรรมจิตต์", "place": "โรงน้ำดื่มเพชรเรือนทอง", "addr": "76 หมู่ 15 ต.บางขัน"}, {"no": "533", "license": "80-2-02463", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายจิรัฎฐ์  เกตุแก้ว", "place": "น้ำดื่ม เกตุแก้ว", "addr": "468 หมู่ 11 ต.บ้านลำนาว"}, {"no": "580", "license": "80-2-00566", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "กองทุนหมู่บ้าน บ้านนาตำเสา", "place": "กองทุนหมู่บ้านบ้านนาตำเสา", "addr": "141 หมู่ 6 ต.บ้านนิคม"}, {"no": "582", "license": "80-2-00766", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางนันท์นภัส  เวชสิทธิ์", "place": "น้ำดื่ม เอคิว", "addr": "232 หมู่ 2 ต.บ้านลำนาว"}, {"no": "608", "license": "80-2-00267", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายธนา  หิ้นจิ้ว", "place": "โรงผลิตน้ำดื่ม ไอลินทิพย์ วอเตอร์", "addr": "169 หมู่ 6 ต.บ้านนิคม"}, {"no": "642", "license": "80-2-00868", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายกิตติพิเชษฐ์  สามารถ", "place": "ข้าวหอมน้ำดื่ม 999", "addr": "73 หมู่ 6 ต.บ้านลำนาว"}], "เฉลิมพระเกียรติ": [{"no": "166", "license": "80-2-01250", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายมนตรี โยธารักษ์", "place": "โรงเรียนวัดสระไคร", "addr": "11/7 ถนนนครศรี-สงขลา หมู่ 13 ต.เชียรเขา"}, {"no": "285", "license": "80-2-03555", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายเสมา สุวรรณ", "place": "น้ำดื่มโกลด์ ไลฟ์", "addr": "98/1 หมู่ 3 ต.ดอนตรอ"}, {"no": "310", "license": "80-2-02356", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวนัยนา  ฉิมพลี", "place": "น้ำดื่ม เอฟซี", "addr": "24/2 หมู่ 9 ต.สวนหลวง"}, {"no": "425", "license": "80-2-03259", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายศักดิ์โกสินทร์  เทพเสนา", "place": "น้ำดื่ม พีพี ไลฟ์", "addr": "2/1 หมู่ 5 ต.สวนหลวง"}, {"no": "610", "license": "80-2-00567", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายวิสุทธ์  ซังเอียด", "place": "น้ำดื่ม วิสุทธ์", "addr": "66/2 หมู่ 9 ต.เชียรเขา"}], "หัวไทร": [{"no": "182", "license": "80-2-00751", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวอังคณา มากแก้ว", "place": "น้ำดื่มเพียวสยาม", "addr": "2/7 หมู่ 4 ต.ควนชะลิก"}, {"no": "248", "license": "80-2-01454", "type": "น้ำแข็ง", "name": "นางศุภกัญญา  เริงเสรี", "place": "โรงน้ำแข็งน้ำเพชร", "addr": "53/4 ซอยเจริญศิลป์ หมู่ 4 ต.แหลม"}, {"no": "302", "license": "80-2-01156", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายพลวัฒน์  เขียวพะวงศ์", "place": "เขียวพะวงศ์ บิซซิเนส", "addr": "316/3 หมู่ 10 ต.หัวไทร"}, {"no": "454", "license": "80-2-03860", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "ว่าที่ ร.ต. จเร  เพ็งคง", "place": "หยาดทิพย์ วอเตอร์", "addr": "51/2 หมู่ 11 ต.หัวไทร"}, {"no": "465", "license": "80-2-00161", "type": "น้ำแข็ง", "name": "ห้างหุ้นส่วนจำกัด ช่วงอนันท์", "place": "ห้างหุ้นส่วนจำกัด ช่วงอนันท์", "addr": "33/2 หมู่ 1 ต.แหลม"}, {"no": "508", "license": "80-2-02562", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางประจวบ  โศภิษฐิกุล", "place": "น้ำดื่ม ออก้า", "addr": "271/5 หมู่ 10 ต.หัวไทร"}, {"no": "521", "license": "80-2-00963", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางอินทิรา  มีแสง", "place": "น้ำดื่มบ้านไร่", "addr": "192/1 หมู่ 3 ต.เขาพังไกร"}, {"no": "607", "license": "80-2-00167", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายถาวร  คงนวล", "place": "น้ำดื่ม พี.เค.พัมคิน", "addr": "1/4 หมู่ 3 ต.ทรายขาว"}, {"no": "611", "license": "80-2-00667", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นางสาวสุภาวดี  มากจันทร์", "place": "เอ็น.พี.", "addr": "304/3 หมู่ 3 ต.หน้าสตน"}, {"no": "614", "license": "80-2-01167", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "ดาบตำรวจ สมศักดิ์  สุนทรทรัพย์", "place": "น้ำดื่มเขาพังไกร", "addr": "136/2 หมู่ 3 ต.เขาพังไกร"}, {"no": "639", "license": "80-2-00568", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายเบญจรงค์  มณีโชติ", "place": "บีเคเอ", "addr": "2/6 หมู่ 4 ต.แหลม"}, {"no": "648", "license": "80-2-01568", "type": "น้ำบริโภคในภาชนะบรรจุที่ปิดสนิท", "name": "นายปรีดา  อักษรคง", "place": "โรงน้ำดื่มอักษรคงเจริญ", "addr": "96 หมู่ 1 ต.ทรายขาว"}]};
+
+// ===== STATE =====
+let currentAmphoe = '';
+let formData = {}; // {index: {status, lat, lng, phone, isTarget}}
+let savedRows = new Set();
+let searchTerm = '';
+let filterStatus = 'all';
+
+// ===== INIT =====
+window.onload = function() {
+  const params = new URLSearchParams(window.location.search);
+  currentAmphoe = params.get('amphoe') || '';
+
+  if (!currentAmphoe || !allData.hasOwnProperty(currentAmphoe)) {
+    showNoAmphoe();
+    return;
+  }
+
+  document.getElementById('amphoeBadge').textContent = 'อ.'+currentAmphoe;
+  document.title = 'แบบฟอร์ม อ.'+currentAmphoe+' | น้ำบริโภค/น้ำแข็ง 2569';
+  document.getElementById('bottomBar').style.display = 'flex';
+  renderAll();
+};
+
+function getRows() {
+  return allData[currentAmphoe] || [];
+}
+
+function getFiltered() {
+  let rows = getRows();
+  if (searchTerm) {
+    const s = searchTerm.toLowerCase();
+    rows = rows.filter(r => r.place.toLowerCase().includes(s) || r.name.toLowerCase().includes(s) || r.addr.toLowerCase().includes(s));
+  }
+  if (filterStatus !== 'all') {
+    rows = rows.filter((r,i) => {
+      const d = formData[i] || {};
+      if (filterStatus === 'filled') return d.status && d.status !== '';
+      if (filterStatus === 'pending') return !d.status || d.status === '';
+      return true;
+    });
+  }
+  return rows;
+}
+
+function renderAll() {
+  const rows = getRows();
+  const filtered = getFiltered();
+  const filled = rows.filter((r,i) => formData[i]?.status && formData[i].status !== '').length;
+
+  const content = document.getElementById('mainContent');
+
+  // Stats
+  let statsHtml = `<div class="stats-bar">
+    <div class="stat-card total"><div class="stat-label">สถานที่ทั้งหมด</div><div class="stat-val">${rows.length}</div></div>
+    <div class="stat-card filled"><div class="stat-label">กรอกแล้ว</div><div class="stat-val">${filled}</div></div>
+    <div class="stat-card pending"><div class="stat-label">ยังไม่กรอก</div><div class="stat-val">${rows.length - filled}</div></div>
+  </div>`;
+
+  // Progress
+  const pct = rows.length > 0 ? Math.round(filled/rows.length*100) : 0;
+  let progressHtml = `<div class="progress-wrap">
+    <div class="progress-label"><span>ความคืบหน้า</span><span>${pct}%</span></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+  </div>`;
+
+  // Table
+  let tableBody = '';
+  if (filtered.length === 0) {
+    tableBody = `<tr><td colspan="7"><div class="empty-state"><div class="icon">🔍</div><p>ไม่พบข้อมูลที่ค้นหา</p></div></td></tr>`;
+  } else {
+    filtered.forEach((row, fi) => {
+      const i = getRows().indexOf(row);
+      const d = formData[i] || {};
+      const isSaved = savedRows.has(i);
+
+      let statusBadge = `<span class="status-badge empty"><span class="status-dot"></span>ยังไม่กรอก</span>`;
+      if (d.status === 'คงอยู่') statusBadge = `<span class="status-badge active"><span class="status-dot"></span>คงอยู่</span>`;
+      else if (d.status === 'ไม่มีสภาพ') statusBadge = `<span class="status-badge inactive"><span class="status-dot"></span>ไม่มีสภาพ</span>`;
+      else if (d.status && d.status !== '') statusBadge = `<span class="status-badge empty"><span class="status-dot"></span>${d.status}</span>`;
+
+      tableBody += `<tr>
+        <td class="td-no">${row.no}</td>
+        <td>
+          <div class="place-name">${row.place}</div>
+          <div class="place-addr">${row.name}</div>
+          <div class="place-addr">${row.addr}</div>
+          <span class="place-type">${row.type}</span>
+        </td>
+        <td style="min-width:120px">
+          <div style="margin-bottom:4px">${statusBadge}</div>
+          <select class="inline-select" onchange="updateField(${i},'status',this.value)" style="margin-top:4px">
+            <option value="">-- เลือกสถานะ --</option>
+            <option value="คงอยู่" ${d.status==='คงอยู่'?'selected':''}>คงอยู่</option>
+            <option value="ไม่มีสภาพ" ${d.status==='ไม่มีสภาพ'?'selected':''}>ไม่มีสภาพ</option>
+            <option value="อื่นๆ" ${d.status==='อื่นๆ'?'selected':''}>อื่นๆ</option>
+          </select>
+        </td>
+        <td style="min-width:200px">
+          <div class="coord-row">
+            <input class="inline-input" type="number" step="any" placeholder="Latitude" value="${d.lat||''}" onchange="updateField(${i},'lat',this.value)" />
+            <input class="inline-input" type="number" step="any" placeholder="Longitude" value="${d.lng||''}" onchange="updateField(${i},'lng',this.value)" />
+            <button class="gps-btn" onclick="getGPS(${i})" title="ใช้ตำแหน่งปัจจุบัน">📍</button>
+          </div>
+        </td>
+        <td style="min-width:140px">
+          <input class="inline-input" type="tel" placeholder="0xx-xxx-xxxx" value="${d.phone||''}" onchange="updateField(${i},'phone',this.value)" />
+        </td>
+        <td style="min-width:110px; text-align:center">
+          <select class="inline-select" onchange="updateField(${i},'isTarget',this.value)">
+            <option value="">-- เลือก --</option>
+            <option value="ใช่" ${d.isTarget==='ใช่'?'selected':''}>✅ ใช่</option>
+            <option value="ไม่ใช่" ${d.isTarget==='ไม่ใช่'?'selected':''}>❌ ไม่ใช่</option>
+          </select>
+        </td>
+        <td>
+          <button class="save-row-btn ${isSaved?'saved':''}" onclick="saveRow(${i},this)">
+            ${isSaved ? '✓ บันทึกแล้ว' : '💾 บันทึก'}
+          </button>
+        </td>
+      </tr>`;
+    });
+  }
+
+  let tableHtml = `<div class="table-wrap">
+    <div class="table-toolbar">
+      <div class="toolbar-title">รายชื่อสถานที่ — อำเภอ${currentAmphoe}</div>
+      <input class="search-box" type="text" placeholder="🔍 ค้นหาสถานที่..." value="${searchTerm}" oninput="searchTerm=this.value;renderAll()" />
+      <select class="filter-select" onchange="filterStatus=this.value;renderAll()">
+        <option value="all" ${filterStatus==='all'?'selected':''}>ทั้งหมด</option>
+        <option value="filled" ${filterStatus==='filled'?'selected':''}>กรอกแล้ว</option>
+        <option value="pending" ${filterStatus==='pending'?'selected':''}>ยังไม่กรอก</option>
+      </select>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>สถานที่</th>
+            <th>สถานะ</th>
+            <th>พิกัด GPS</th>
+            <th>เบอร์โทรศัพท์</th>
+            <th>กลุ่มเป้าหมาย</th>
+            <th>บันทึก</th>
+          </tr>
+        </thead>
+        <tbody>${tableBody}</tbody>
+      </table>
+    </div>
+  </div>`;
+
+  content.innerHTML = statsHtml + progressHtml + tableHtml;
+
+  document.getElementById('filledCount').textContent = filled;
+  document.getElementById('totalCount').textContent = rows.length;
+}
+
+function updateField(i, field, val) {
+  if (!formData[i]) formData[i] = {};
+  formData[i][field] = val;
+  savedRows.delete(i);
+  // Re-render stats only
+  const rows = getRows();
+  const filled = rows.filter((r,idx) => formData[idx]?.status && formData[idx].status !== '').length;
+  const pct = rows.length > 0 ? Math.round(filled/rows.length*100) : 0;
+  const pf = document.querySelector('.progress-fill');
+  if (pf) pf.style.width = pct+'%';
+  const pl = document.querySelector('.progress-label span:last-child');
+  if (pl) pl.textContent = pct+'%';
+  document.querySelectorAll('.stat-card.filled .stat-val').forEach(el => el.textContent = filled);
+  document.querySelectorAll('.stat-card.pending .stat-val').forEach(el => el.textContent = rows.length - filled);
+  document.getElementById('filledCount').textContent = filled;
+}
+
+function getGPS(i) {
+  if (!navigator.geolocation) { showToast('เบราว์เซอร์ไม่รองรับ GPS', 'error'); return; }
+  showToast('⏳ กำลังหาตำแหน่ง...');
+  navigator.geolocation.getCurrentPosition(pos => {
+    const lat = pos.coords.latitude.toFixed(6);
+    const lng = pos.coords.longitude.toFixed(6);
+    updateField(i, 'lat', lat);
+    updateField(i, 'lng', lng);
+    // Update inputs
+    const inputs = document.querySelectorAll(`[data-row="${i}"]`);
+    renderAll();
+    showToast('✅ ได้พิกัดแล้ว: '+lat+', '+lng, 'success');
+  }, err => {
+    showToast('❌ ไม่สามารถหาตำแหน่งได้', 'error');
+  });
+}
+
+function saveRow(i, btn) {
+  const d = formData[i] || {};
+  if (!d.status) { showToast('⚠️ กรุณาเลือกสถานะก่อน', 'error'); return; }
+  btn.classList.add('saving');
+  btn.textContent = '⏳ กำลังบันทึก...';
+
+  const row = getRows()[i];
+  const payload = {
+    action: 'saveRow',
+    sheetName: SHEET_NAME,
+    data: {
+      timestamp: new Date().toLocaleString('th-TH'),
+      amphoe: currentAmphoe,
+      license: row.license,
+      place: row.place,
+      name: row.name,
+      addr: row.addr,
+      type: row.type,
+      status: d.status || '',
+      lat: d.lat || '',
+      lng: d.lng || '',
+      phone: d.phone || '',
+      isTarget: d.isTarget || ''
+    }
+  };
+
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    body: JSON.stringify(payload),
+    headers: {'Content-Type': 'text/plain'}
+  })
+  .then(r => r.json())
+  .then(res => {
+    if (res.status === 'ok') {
+      savedRows.add(i);
+      btn.classList.remove('saving');
+      btn.classList.add('saved');
+      btn.innerHTML = '✓ บันทึกแล้ว';
+      showToast('✅ บันทึกสำเร็จ: '+row.place, 'success');
+    } else {
+      throw new Error(res.message || 'เกิดข้อผิดพลาด');
+    }
+  })
+  .catch(err => {
+    btn.classList.remove('saving');
+    btn.innerHTML = '💾 บันทึก';
+    showToast('❌ บันทึกไม่สำเร็จ: '+err.message, 'error');
+  });
+}
+
+function submitAll() {
+  const rows = getRows();
+  const toSubmit = rows.filter((r,i) => formData[i]?.status && !savedRows.has(i));
+  if (toSubmit.length === 0) {
+    showToast('✅ ส่งข้อมูลทั้งหมดแล้ว', 'success');
+    return;
+  }
+  document.getElementById('loadingOverlay').classList.add('show');
+
+  const allPayload = toSubmit.map((row, fi) => {
+    const i = rows.indexOf(row);
+    const d = formData[i] || {};
+    return {
+      timestamp: new Date().toLocaleString('th-TH'),
+      amphoe: currentAmphoe,
+      license: row.license,
+      place: row.place,
+      name: row.name,
+      addr: row.addr,
+      type: row.type,
+      status: d.status || '',
+      lat: d.lat || '',
+      lng: d.lng || '',
+      phone: d.phone || '',
+      isTarget: d.isTarget || ''
+    };
+  });
+
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    body: JSON.stringify({action: 'saveAll', sheetName: SHEET_NAME, data: allPayload}),
+    headers: {'Content-Type': 'text/plain'}
+  })
+  .then(r => r.json())
+  .then(res => {
+    document.getElementById('loadingOverlay').classList.remove('show');
+    if (res.status === 'ok') {
+      toSubmit.forEach(r => savedRows.add(rows.indexOf(r)));
+      renderAll();
+      showToast('✅ ส่งข้อมูลสำเร็จ '+toSubmit.length+' รายการ', 'success');
+    } else throw new Error(res.message);
+  })
+  .catch(err => {
+    document.getElementById('loadingOverlay').classList.remove('show');
+    showToast('❌ เกิดข้อผิดพลาด: '+err.message, 'error');
+  });
+}
+
+function showNoAmphoe() {
+  document.getElementById('amphoeBadge').textContent = 'ไม่ระบุอำเภอ';
+  document.getElementById('mainContent').innerHTML = `
+    <div class="no-amphoe">
+      <div class="big-icon">🗺️</div>
+      <h2>กรุณาระบุอำเภอใน URL</h2>
+      <p>เพิ่ม <strong>?amphoe=ชื่ออำเภอ</strong> ต่อท้าย URL เพื่อเข้าสู่แบบฟอร์มของอำเภอนั้น</p>
+      <code>form.html?amphoe=สิชล</code>
+      <br><br>
+      <p style="font-size:13px;color:var(--text-light)">อำเภอที่มีข้อมูล: ${Object.keys(allData).join(' · ')}</p>
+    </div>`;
+}
+
+function showToast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show '+(type||'');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+</script>
+</body>
+</html>
