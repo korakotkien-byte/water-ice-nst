@@ -199,7 +199,9 @@ function renderAll(){
       let statusBadge=`<span class="status-badge empty"><span class="status-dot"></span>ยังไม่กรอก</span>`;
       if(d.status==='คงอยู่') statusBadge=`<span class="status-badge active"><span class="status-dot"></span>คงอยู่</span>`;
       else if(d.status==='ไม่มีสภาพ') statusBadge=`<span class="status-badge inactive"><span class="status-dot"></span>ไม่มีสภาพ</span>`;
-      else if(d.status) statusBadge=`<span class="status-badge empty"><span class="status-dot"></span>${d.status}</span>`;
+      else if(d.status==='หยุดผลิต') statusBadge=`<span class="status-badge" style="background:#FFF3E0;color:#E65100"><span class="status-dot"></span>หยุดผลิต</span>`;
+      else if(d.status==='เปลี่ยนเจ้าของ') statusBadge=`<span class="status-badge" style="background:#EDE7F6;color:#4527A0"><span class="status-dot"></span>เปลี่ยนเจ้าของ</span>`;
+      else if(d.status==='จะแจ้งเลิก') statusBadge=`<span class="status-badge" style="background:#FCE4EC;color:#880E4F"><span class="status-dot"></span>จะแจ้งเลิก</span>`;
 
       tableBody+=`<tr>
         <td class="col-no">${row.no}</td>
@@ -218,9 +220,11 @@ function renderAll(){
           <div style="margin-bottom:4px">${statusBadge}</div>
           <select class="inline-select" onchange="updateField(${i},'status',this.value)">
             <option value="">-- เลือกสถานะ --</option>
-            <option value="คงอยู่" ${d.status==='คงอยู่'?'selected':''}>คงอยู่</option>
-            <option value="ไม่มีสภาพ" ${d.status==='ไม่มีสภาพ'?'selected':''}>ไม่มีสภาพ</option>
-            <option value="อื่นๆ" ${d.status==='อื่นๆ'?'selected':''}>อื่นๆ</option>
+            <option value="คงอยู่" ${d.status==='คงอยู่'?'selected':''}>✅ คงอยู่</option>
+            <option value="ไม่มีสภาพ" ${d.status==='ไม่มีสภาพ'?'selected':''}>❌ ไม่มีสภาพ</option>
+            <option value="หยุดผลิต" ${d.status==='หยุดผลิต'?'selected':''}>⏸️ หยุดผลิต</option>
+            <option value="เปลี่ยนเจ้าของ" ${d.status==='เปลี่ยนเจ้าของ'?'selected':''}>🔄 เปลี่ยนเจ้าของ</option>
+            <option value="จะแจ้งเลิก" ${d.status==='จะแจ้งเลิก'?'selected':''}>🚫 จะแจ้งเลิก</option>
           </select>
         </td>
         <td class="col-gps">
