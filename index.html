@@ -162,35 +162,49 @@ function loadSavedData() {
   const loadingEl = document.getElementById('mainContent');
   loadingEl.innerHTML = '<div style="text-align:center;padding:60px;color:var(--text-light)"><div style="font-size:32px;margin-bottom:12px">⏳</div><div>กำลังโหลดข้อมูล...</div></div>';
 
-  const url = SCRIPT_URL + '?action=getData&amphoe=' + encodeURIComponent(currentAmphoe);
-  fetch(url)
-    .then(r => r.json())
-    .then(res => {
-      if (res.status === 'ok' && res.data) {
-        // นำข้อมูลที่เคยบันทึกมาใส่ใน formData
-        const rows = getRows();
-        rows.forEach((row, i) => {
-          const saved = res.data[row.license];
-          if (saved) {
-            formData[i] = {
-              status:   saved.status   || '',
-              lat:      saved.lat      || '',
-              lng:      saved.lng      || '',
-              phone:    saved.phone    || '',
-              isTarget: saved.isTarget || ''
-            };
-            savedRows.add(i);
-          }
-        });
-        const count = Object.keys(res.data).length;
-        if (count > 0) showToast('✅ โหลดข้อมูลเดิม ' + count + ' รายการ', 'success');
-      }
-      renderAll();
-    })
-    .catch(err => {
-      console.error('Load error:', err);
-      renderAll(); // แสดงฟอร์มเปล่าถ้าโหลดไม่ได้
-    });
+  const cbName = 'loadCb_' + Date.now();
+  const url = SCRIPT_URL + '?action=getData&amphoe=' + encodeURIComponent(currentAmphoe) + '&callback=' + cbName;
+
+  const timer = setTimeout(() => {
+    delete window[cbName];
+    console.warn('Load timeout - showing empty form');
+    renderAll();
+  }, 8000);
+
+  window[cbName] = function(res) {
+    clearTimeout(timer);
+    delete window[cbName];
+    if (script.parentNode) script.parentNode.removeChild(script);
+
+    if (res && res.status === 'ok' && res.data) {
+      const rows = getRows();
+      rows.forEach((row, i) => {
+        const saved = res.data[row.license];
+        if (saved && saved.status) {
+          formData[i] = {
+            status:   saved.status   || '',
+            lat:      String(saved.lat   || ''),
+            lng:      String(saved.lng   || ''),
+            phone:    String(saved.phone || ''),
+            isTarget: saved.isTarget || ''
+          };
+          savedRows.add(i);
+        }
+      });
+      const count = Object.keys(res.data).filter(k => res.data[k].status).length;
+      if (count > 0) showToast('✅ โหลดข้อมูลเดิม ' + count + ' รายการ', 'success');
+    }
+    renderAll();
+  };
+
+  const script = document.createElement('script');
+  script.src = url;
+  script.onerror = function() {
+    clearTimeout(timer);
+    delete window[cbName];
+    renderAll();
+  };
+  document.head.appendChild(script);
 }
 
 function getRows(){ return allData[currentAmphoe]||[]; }
