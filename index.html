@@ -2,6 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob:;">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ทะเบียนน้ำบริโภค/น้ำแข็ง 2569</title>
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Chakra+Petch:wght@400;600;700&display=swap" rel="stylesheet">
@@ -167,19 +168,17 @@ function loadSavedData() {
 
   const timer = setTimeout(() => {
     delete window[cbName];
-    console.warn('Load timeout - showing empty form');
     renderAll();
   }, 15000);
 
   window[cbName] = function(res) {
     clearTimeout(timer);
     delete window[cbName];
-    if (script.parentNode) script.parentNode.removeChild(script);
+    try { if (script.parentNode) script.parentNode.removeChild(script); } catch(e) {}
 
     if (res && res.status === 'ok' && res.data) {
       const rows = getRows();
       rows.forEach((row, i) => {
-        // trim เผื่ออำเภอมี space ต่อท้าย
         const saved = res.data[row.license] || res.data[row.license.trim()];
         if (saved && saved.status) {
           formData[i] = {
@@ -198,14 +197,9 @@ function loadSavedData() {
     renderAll();
   };
 
-  console.log('Loading saved data from:', url);
   const script = document.createElement('script');
   script.src = url;
-  script.onload = function() {
-    console.log('Script loaded successfully');
-  };
   script.onerror = function() {
-    console.error('Script load error');
     clearTimeout(timer);
     delete window[cbName];
     renderAll();
