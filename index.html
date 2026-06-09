@@ -169,7 +169,7 @@ function loadSavedData() {
     delete window[cbName];
     console.warn('Load timeout - showing empty form');
     renderAll();
-  }, 8000);
+  }, 15000);
 
   window[cbName] = function(res) {
     clearTimeout(timer);
@@ -179,7 +179,8 @@ function loadSavedData() {
     if (res && res.status === 'ok' && res.data) {
       const rows = getRows();
       rows.forEach((row, i) => {
-        const saved = res.data[row.license];
+        // trim เผื่ออำเภอมี space ต่อท้าย
+        const saved = res.data[row.license] || res.data[row.license.trim()];
         if (saved && saved.status) {
           formData[i] = {
             status:   saved.status   || '',
@@ -197,9 +198,14 @@ function loadSavedData() {
     renderAll();
   };
 
+  console.log('Loading saved data from:', url);
   const script = document.createElement('script');
   script.src = url;
+  script.onload = function() {
+    console.log('Script loaded successfully');
+  };
   script.onerror = function() {
+    console.error('Script load error');
     clearTimeout(timer);
     delete window[cbName];
     renderAll();
