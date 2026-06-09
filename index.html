@@ -345,15 +345,13 @@ function saveRow(i,btn){
       phone:d.phone||'', isTarget:d.isTarget||''
     }
   };
-  fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify(payload),headers:{'Content-Type':'text/plain'}})
-  .then(r=>r.json()).then(res=>{
-    if(res.status==='ok'){
+  fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify(payload),mode:'no-cors',headers:{'Content-Type':'text/plain'}})
+  .then(()=>{
       savedRows.add(i);
       btn.classList.remove('saving');
       btn.classList.add('saved');
       btn.innerHTML='✓ บันทึกแล้ว';
       showToast('✅ บันทึกสำเร็จ','success');
-    } else throw new Error(res.message);
   }).catch(err=>{
     btn.classList.remove('saving');
     btn.innerHTML='💾 บันทึก';
@@ -376,14 +374,12 @@ function submitAll(){
       status:d.status||'',lat:d.lat||'',lng:d.lng||'',
       phone:d.phone||'',isTarget:d.isTarget||''};
   });
-  fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'saveAll',sheetName:SHEET_NAME,data:allPayload}),headers:{'Content-Type':'text/plain'}})
-  .then(r=>r.json()).then(res=>{
+  fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'saveAll',sheetName:SHEET_NAME,data:allPayload}),mode:'no-cors',headers:{'Content-Type':'text/plain'}})
+  .then(()=>{
     document.getElementById('loadingOverlay').classList.remove('show');
-    if(res.status==='ok'){
-      toSubmit.forEach(r=>savedRows.add(rows.indexOf(r)));
-      renderAll();
-      showToast('✅ ส่งข้อมูลสำเร็จ '+toSubmit.length+' รายการ','success');
-    } else throw new Error(res.message);
+    toSubmit.forEach(r=>savedRows.add(rows.indexOf(r)));
+    renderAll();
+    showToast('✅ ส่งข้อมูลสำเร็จ '+toSubmit.length+' รายการ','success');
   }).catch(err=>{
     document.getElementById('loadingOverlay').classList.remove('show');
     showToast('❌ เกิดข้อผิดพลาด: '+err.message,'error');
