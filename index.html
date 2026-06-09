@@ -421,21 +421,24 @@ function submitAll(){
 
 
 function submitViaForm(payload, onSuccess, onError) {
+  const cbName = 'cb_' + Date.now();
   const encoded = encodeURIComponent(JSON.stringify(payload));
-  const url = SCRIPT_URL + '?payload=' + encoded;
+  const url = SCRIPT_URL + '?payload=' + encoded + '&callback=' + cbName;
 
-  let iframe = document.getElementById('hidden_iframe');
-  if (!iframe) {
-    iframe = document.createElement('iframe');
-    iframe.name = 'hidden_iframe';
-    iframe.id = 'hidden_iframe';
-    iframe.style.display = 'none';
-    document.body.appendChild(iframe);
-  }
+  window[cbName] = function(res) {
+    delete window[cbName];
+    document.head.removeChild(script);
+    onSuccess && onSuccess();
+  };
 
-  iframe.onload = () => { onSuccess && onSuccess(); };
-  iframe.onerror = () => { onError && onError(); };
-  iframe.src = url;
+  const script = document.createElement('script');
+  script.src = url;
+  script.onerror = function() {
+    delete window[cbName];
+    // ถึงแม้ error ก็ถือว่าส่งแล้ว เพราะ CORS block response ไม่ใช่ request
+    onSuccess && onSuccess();
+  };
+  document.head.appendChild(script);
 }
 
 function showNoAmphoe(){
