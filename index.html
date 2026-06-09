@@ -155,8 +155,43 @@ window.onload = function() {
   document.getElementById('amphoeBadge').textContent = 'อ.'+currentAmphoe;
   document.title = 'แบบฟอร์ม อ.'+currentAmphoe+' | น้ำบริโภค 2569';
   document.getElementById('bottomBar').style.display = 'flex';
-  renderAll();
+  loadSavedData();
 };
+
+function loadSavedData() {
+  const loadingEl = document.getElementById('mainContent');
+  loadingEl.innerHTML = '<div style="text-align:center;padding:60px;color:var(--text-light)"><div style="font-size:32px;margin-bottom:12px">⏳</div><div>กำลังโหลดข้อมูล...</div></div>';
+
+  const url = SCRIPT_URL + '?action=getData&amphoe=' + encodeURIComponent(currentAmphoe);
+  fetch(url)
+    .then(r => r.json())
+    .then(res => {
+      if (res.status === 'ok' && res.data) {
+        // นำข้อมูลที่เคยบันทึกมาใส่ใน formData
+        const rows = getRows();
+        rows.forEach((row, i) => {
+          const saved = res.data[row.license];
+          if (saved) {
+            formData[i] = {
+              status:   saved.status   || '',
+              lat:      saved.lat      || '',
+              lng:      saved.lng      || '',
+              phone:    saved.phone    || '',
+              isTarget: saved.isTarget || ''
+            };
+            savedRows.add(i);
+          }
+        });
+        const count = Object.keys(res.data).length;
+        if (count > 0) showToast('✅ โหลดข้อมูลเดิม ' + count + ' รายการ', 'success');
+      }
+      renderAll();
+    })
+    .catch(err => {
+      console.error('Load error:', err);
+      renderAll(); // แสดงฟอร์มเปล่าถ้าโหลดไม่ได้
+    });
+}
 
 function getRows(){ return allData[currentAmphoe]||[]; }
 
